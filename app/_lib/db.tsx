@@ -23,7 +23,7 @@ const executeQuery = (query, arrParams) => {
                     reject(err)
                 }
                 console.log('------db.jsx------')
-                console.log(data)
+                //console.log(data)
                 resolve(data)
             })
         } catch (err) {
