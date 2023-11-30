@@ -1,2 +1,4 @@
 .next
+.env.local
+.github/ISSUE_TEMPLATE
 node_modules
