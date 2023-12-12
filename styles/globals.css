@@ -21,6 +21,8 @@
             sans-serif;
         line-height: 1.6;
         font-size: 18px;
+        height: 100%;
+        width: 100%;
     }
 
     * {
@@ -46,5 +48,11 @@
     }
     .largeBoldWhiteTxt {
         @apply text-lg font-bold text-white self-center;
+    }
+    .inputBorder {
+        @apply border border-solid border-gray-300 rounded-lg;
+    }
+    .orangeBtnL {
+        @apply bg-orange text-white rounded-lg w-28 text-2xl;
     }
 }

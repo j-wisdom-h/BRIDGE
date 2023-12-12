@@ -16,10 +16,13 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@hookform/resolvers": "^3.3.2",
         "mysql2": "^3.6.5",
         "next": "^14.0.3",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "react-hook-form": "^7.48.2",
+        "yup": "^1.3.2"
     },
     "devDependencies": {
         "@next/bundle-analyzer": "^14.0.3",
