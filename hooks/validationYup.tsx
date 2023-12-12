@@ -29,5 +29,5 @@ export const signUpschema = yup.object().shape({
     sex: yup.string().required('성별을 필수로 입력해주세요.'),
     address: yup.string().required('주소를 필수로 입력해주세요.'),
     alias: yup.string().max(16, '별명을 16자이하로 입력해주세요.'),
-    age: yup.number(),
+    birthday: yup.string().required('생일 필수로 입력해주세요.'),
 })
