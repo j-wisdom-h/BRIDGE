@@ -1,35 +1,52 @@
-import { createPool } from 'mysql2'
+import {
+    createPool,
+    Pool,
+    PoolConnection,
+    ResultSetHeader,
+    RowDataPacket,
+} from 'mysql2'
 
-const pool = createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
+// DB 연결 및 풀 생성
+const pool: Pool = createPool({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_DATABASE || '',
     port: 3306,
 })
 
-pool.getConnection((err, conn) => {
-    if (err) console.log('Error connecting to db...')
-    else console.log('Connected to db...!')
-    conn.release()
-})
-
-const executeQuery = (query, arrParams) => {
+// executeQuery 함수
+export default function executeQuery(
+    query: string,
+    arrParams: (string | '')[],
+): Promise<RowDataPacket[]> {
     return new Promise((resolve, reject) => {
-        try {
-            pool.query(query, arrParams, (err, data) => {
-                if (err) {
-                    console.log('Error in executing the query')
-                    reject(err)
-                }
-                console.log('------db.jsx------')
-                //console.log(data)
-                resolve(data)
-            })
-        } catch (err) {
-            reject(err)
-        }
+        pool.getConnection((err: Error, conn: PoolConnection) => {
+            if (err) {
+                console.error('Error connecting to db:', err.message)
+                reject(err)
+            } else {
+                conn.query(
+                    query,
+                    arrParams,
+                    (
+                        err: Error | null,
+                        data: RowDataPacket[] | ResultSetHeader,
+                    ) => {
+                        conn.release()
+                        if (err) {
+                            console.error(
+                                'Error in executing the query:',
+                                err.message,
+                            )
+                            reject(err)
+                        } else {
+                            console.log('Query executed successfully')
+                            resolve(data as RowDataPacket[])
+                        }
+                    },
+                )
+            }
+        })
     })
 }
-
-export default executeQuery

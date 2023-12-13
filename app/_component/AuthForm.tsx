@@ -1,37 +1,82 @@
 'use client'
 
 import { yupResolver } from '@hookform/resolvers/yup'
-import { signUpschema } from 'hooks/validationYup'
+import { logInschema, signUpschema } from 'hooks/validationYup'
+import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 
 import { SignInput } from '@/_component/Input'
+import { IsignIn, IsignUp } from '@/_interfaces/IAuth'
 
-export interface signUpSubmitForm {
-    name: string
-    email: string
-    password: string
-    confirmPassword: string
-    sex: string
-    address: string
-    alias?: string | undefined
-    birthday: string
-}
-
-export function SignupForm() {
+function LoginForm() {
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<signUpSubmitForm>({
+    } = useForm<IsignIn>({ resolver: yupResolver(logInschema) })
+
+    const onSubmit = async (data: IsignUp) => {
+        const { email, password } = data
+        console.log('AuthForm', data)
+        await signIn('Authcredentials', {
+            username: email,
+            password: password,
+            redirect: true,
+            callbackUrl: '/',
+        })
+    }
+
+    return (
+        <div>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="border-solid border px-8 py-12"
+            >
+                <div>
+                    <div>
+                        <label htmlFor="email">email</label>
+                        <SignInput
+                            type="text"
+                            id="email"
+                            {...register('email')}
+                        />
+                    </div>
+                    {errors.email && <div>{errors.email?.message}</div>}
+                </div>
+                <div>
+                    <div>
+                        <label htmlFor="password">password</label>
+                        <SignInput
+                            type="password"
+                            id="password"
+                            {...register('password')}
+                        />
+                    </div>
+                    {errors.password && <div>{errors.password?.message}</div>}
+                </div>
+                <button type="submit" className="orangeBtnL">
+                    SignIn
+                </button>
+            </form>
+        </div>
+    )
+}
+
+function SignUpForm() {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<IsignUp>({
         resolver: yupResolver(signUpschema),
     })
 
-    const onSubmit = (data: signUpSubmitForm) => {
+    const onSubmit = (data: IsignUp) => {
         console.log(data)
     }
 
     return (
-        <div className="">
+        <div>
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="border-solid border px-8 py-12"
@@ -39,7 +84,7 @@ export function SignupForm() {
                 <div>
                     <div className="flexRBetween mb-5">
                         <label htmlFor="name" className="basis-1/3">
-                            name
+                            Nickname
                         </label>
                         <SignInput
                             type="text"
@@ -97,31 +142,31 @@ export function SignupForm() {
                 </div>
                 <div>
                     <div className="flexRBetween">
-                        <label htmlFor="sex" className="basis-1/3">
-                            sex
+                        <label htmlFor="gender" className="basis-1/3">
+                            gender
                         </label>
                         <div className="flex">
                             <div>
                                 <input
                                     type="radio"
-                                    id="sex-max"
+                                    id="gender-max"
                                     value="남"
-                                    {...register('sex')}
+                                    {...register('gender')}
                                 ></input>
                                 남
                             </div>
                             <div>
                                 <input
                                     type="radio"
-                                    id="sex-women"
+                                    id="gender-women"
                                     value="여"
-                                    {...register('sex')}
+                                    {...register('gender')}
                                 ></input>
                                 여
                             </div>
                         </div>
                     </div>
-                    {errors.sex && <div>{errors.sex?.message}</div>}
+                    {errors.gender && <div>{errors.gender?.message}</div>}
                 </div>
                 <div>
                     <div className="flexRBetween">
@@ -135,19 +180,6 @@ export function SignupForm() {
                         />
                     </div>
                     {errors.address && <div>{errors.address?.message}</div>}
-                </div>
-                <div>
-                    <div className="flexRBetween">
-                        <label htmlFor="alias" className="basis-1/3">
-                            alias
-                        </label>
-                        <SignInput
-                            type="text"
-                            id="alias"
-                            {...register('alias')}
-                        />
-                    </div>
-                    {errors.alias && <div>{errors.alias?.message}</div>}
                 </div>
                 <div>
                     <div className="flexRBetween">
@@ -169,3 +201,4 @@ export function SignupForm() {
         </div>
     )
 }
+export { LoginForm, SignUpForm }
