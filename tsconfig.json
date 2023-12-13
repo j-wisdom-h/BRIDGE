@@ -19,7 +19,8 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "@/_component/*": ["app/_component/*"]
+            "@/_component/*": ["app/_component/*"],
+            "@/_interfaces/*": ["app/_interfaces/*"]
         },
         "allowImportingTsExtensions": true,
         "strictNullChecks": true
