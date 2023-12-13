@@ -4,6 +4,7 @@ import { Metadata } from 'next'
 
 import Footer from '@/_component/Footer'
 import Header from '@/_component/Header'
+import Providers from '@/_component/Provider'
 
 export const metadata: Metadata = {
     title: 'Bridge',
@@ -17,9 +18,11 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className="min-h-screen relative">
-                <Header></Header>
-                {children}
+            <body className="relative">
+                <Providers>
+                    <Header></Header>
+                    {children}
+                </Providers>
                 <Footer></Footer>
             </body>
         </html>
