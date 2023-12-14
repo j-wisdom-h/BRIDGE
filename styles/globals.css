@@ -55,4 +55,7 @@
     .orangeBtnL {
         @apply bg-orange text-white rounded-lg w-28 text-2xl;
     }
+    .centerMiddle {
+        @apply flex flex-col justify-center items-center h-full;
+    }
 }

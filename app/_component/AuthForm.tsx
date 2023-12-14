@@ -17,8 +17,8 @@ function LoginForm() {
 
     const onSubmit = async (data: IsignUp) => {
         const { email, password } = data
-        console.log('AuthForm', data)
-        await signIn('Authcredentials', {
+        //console.log('AuthForm', data)
+        await signIn('credentials', {
             username: email,
             password: password,
             redirect: true,
@@ -71,8 +71,20 @@ function SignUpForm() {
         resolver: yupResolver(signUpschema),
     })
 
-    const onSubmit = (data: IsignUp) => {
-        console.log(data)
+    const onSubmit = async (data: IsignUp) => {
+        const { confirmPassword, ...others } = data
+        //console.log(data)
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...others,
+            }),
+        })
+        const body = await res.json()
+        console.log(body.messsage)
     }
 
     return (
@@ -201,4 +213,5 @@ function SignUpForm() {
         </div>
     )
 }
+
 export { LoginForm, SignUpForm }
