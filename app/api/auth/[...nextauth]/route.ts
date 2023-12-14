@@ -6,7 +6,6 @@ export const authOptions: NextAuthOptions = {
     // Configure one or more authentication providers
     providers: [
         CredentialsProvider({
-            id: 'Authcredentials',
             name: 'Credentials',
             credentials: {
                 username: {
