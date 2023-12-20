@@ -7,18 +7,10 @@
     body {
         padding: 0;
         margin: 0;
-        font-family:
-            -apple-system,
-            BlinkMacSystemFont,
-            Segoe UI,
-            Roboto,
-            Oxygen,
-            Ubuntu,
-            Cantarell,
-            Fira Sans,
-            Droid Sans,
-            Helvetica Neue,
-            sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+            'Pretendard Variable', Pretendard, Roboto, 'Noto Sans KR',
+            'Segoe UI', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji',
+            'Segoe UI Symbol', sans-serif;
         line-height: 1.6;
         font-size: 18px;
         height: 100%;
@@ -53,7 +45,7 @@
         @apply border border-solid border-gray-300 rounded-lg;
     }
     .orangeBtnL {
-        @apply bg-orange text-white rounded-lg w-28 text-2xl;
+        @apply bg-orange text-white rounded-lg w-28 text-2xl p-1.5;
     }
     .centerMiddle {
         @apply flex flex-col justify-center items-center h-full;
