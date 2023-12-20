@@ -1,4 +1,5 @@
 import executeQuery from 'app/_lib/db'
+import bcrypt from 'bcrypt'
 import { RowDataPacket } from 'mysql2'
 
 export async function POST(request: Request) {
@@ -8,9 +9,7 @@ export async function POST(request: Request) {
     const user = users[0]
 
     console.log('user', user)
-    //if (user && (await bcrypt.compare(body.password, user.password))) {
-
-    if (user) {
+    if (user && (await bcrypt.compare(body.password, user.password))) {
         const { password, ...userWithoutPass } = user
         return new Response(JSON.stringify(userWithoutPass))
     } else return new Response(JSON.stringify(null))
