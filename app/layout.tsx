@@ -18,12 +18,12 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className="relative">
+            <body>
                 <Providers>
-                    <Header></Header>
+                    <Header />
                     {children}
                 </Providers>
-                <Footer></Footer>
+                <Footer />
             </body>
         </html>
     )
