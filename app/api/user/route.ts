@@ -1,42 +1,51 @@
 import executeQuery from 'app/_lib/db'
 import bcrypt from 'bcrypt'
+import { findUserByEmail } from 'utils/userQueries'
 
-export async function POST(request: Request) {
-    if (request.method === 'POST') {
-        const body = await request.json()
-        const { email, name, password, gender, address, birthday } = body
+import { User } from '@/_interfaces/IAuth'
 
-        // 비밀번호 암호화
-        const hashedPassword = await bcrypt.hash(password, 10)
+// 회원가입 처리 함수
+export async function signUpUser(user: User) {
+    const { email, name, password, gender, address, birthday } = user
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const sql = `
+    INSERT INTO bridge.user (email, name, password, gender, address, birthday)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `
+    const values = [email, name, hashedPassword, gender, address, birthday]
 
-        // 회원가입을 위한 SQL 쿼리 - 파라미터화된 쿼리 사용
-        const sql = `
-        INSERT INTO bridge.user (email, name, password, gender, address, birthday)
-        VALUES (?, ?, ?, ?, ?, ?)
-    `
-        const values = [email, name, hashedPassword, gender, address, birthday]
-
-        try {
-            // SQL 쿼리 실행 - 파라미터 값을 넣어 실행
-            const result = await executeQuery(sql, values)
-            console.log('User registered:', result)
-
-            return new Response(
-                JSON.stringify({ message: 'User registered successfully!' }),
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    status: 200,
-                },
-            )
-        } catch (error) {
-            console.error('Error registering user:', error)
-            return new Response(
-                JSON.stringify({ message: 'Error registering user!' }),
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    status: 500,
-                },
-            )
+    try {
+        const existingUser = await findUserByEmail(email)
+        if (existingUser) {
+            return { success: false, message: 'Email is already registered' }
         }
+
+        const result = await executeQuery(sql, values)
+        console.log('User registered:', result)
+        return { success: true, message: 'User registered successfully' }
+    } catch (error) {
+        console.error('Error registering user:', error)
+        return { success: false, message: 'Error registering user' }
     }
+}
+
+// POST 요청 처리
+export async function POST(request: Request) {
+    const body = await request.json()
+    const { email, name, password, gender, address, birthday } = body
+    const user: User = {
+        email,
+        name,
+        password,
+        gender,
+        address,
+        birthday,
+    }
+
+    const result = await signUpUser(user)
+
+    return new Response(JSON.stringify(result), {
+        headers: { 'Content-Type': 'application/json' },
+        status: result.success ? 200 : 400,
+    })
 }
