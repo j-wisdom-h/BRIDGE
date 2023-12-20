@@ -1,11 +1,14 @@
-interface IsignUp {
+interface User {
     name: string
     email: string
     password: string
-    confirmPassword: string
     gender: string
     address: string
     birthday: string
+}
+
+interface IsignUp extends User {
+    confirmPassword: string
 }
 
 interface IsignIn {
@@ -13,4 +16,4 @@ interface IsignIn {
     password: string
 }
 
-export type { IsignIn, IsignUp }
+export type { IsignIn, IsignUp, User }
