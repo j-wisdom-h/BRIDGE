@@ -2,11 +2,6 @@ import * as yup from 'yup'
 
 // yup schema 설정
 export const signUpschema = yup.object().shape({
-    name: yup
-        .string()
-        .min(2, '닉네임을 3글자 이상으로 입력해주세요.')
-        .max(12, '닉네임을 12글자 이하로 입력해주세요.')
-        .required('닉네임을 필수로 입력해주세요.'),
     email: yup
         .string()
         .email('이메일 형식을 맞춰서 입력해주세요.')
@@ -27,9 +22,6 @@ export const signUpschema = yup.object().shape({
             '비밀번호가 일치하지 않습니다.',
         )
         .required('비밀번호를 필수로 입력해주세요.'),
-    gender: yup.string().required('성별을 필수로 입력해주세요.'),
-    address: yup.string().required('주소를 필수로 입력해주세요.'),
-    birthday: yup.string().required('생일 필수로 입력해주세요.'),
 })
 
 export const logInschema = yup.object().shape({

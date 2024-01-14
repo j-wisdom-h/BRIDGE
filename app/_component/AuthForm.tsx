@@ -3,18 +3,18 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { logInschema, signUpschema } from 'hooks/validationYup'
 import { signIn } from 'next-auth/react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { SignInput } from '@/_component/Input'
-import { IsignIn, IsignUp } from '@/_interfaces/IAuth'
+import { IsignUp, User } from '@/_interfaces/IAuth'
 
 function LoginForm() {
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<IsignIn>({ resolver: yupResolver(logInschema) })
+    } = useForm<User>({ resolver: yupResolver(logInschema) })
 
     const onSubmit = async (data: IsignUp) => {
         const { email, password } = data
@@ -68,14 +68,26 @@ function SignUpForm() {
         register,
         handleSubmit,
         formState: { errors },
+        watch,
     } = useForm<IsignUp>({
         resolver: yupResolver(signUpschema),
     })
 
+    // 이메일 전송 확인하는 상태
+    const [sendSucess, setSendSucess] = useState(false)
+
+    // 이메일 인증번호 확인하는 상태
+    const [verifySucess, setVerifySucess] = useState(false)
+
     const onSubmit = async (data: IsignUp) => {
         const { confirmPassword, ...others } = data
+
+        if (verifySucess) {
+            alert('이메일인증을 해주세요')
+            return
+        }
         //console.log(data)
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, {
+        const res = await fetch(`http://localhost:3000/api/user`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -85,15 +97,26 @@ function SignUpForm() {
             }),
         })
         const body = await res.json()
-        console.log(body.messsage)
+        console.log(body)
     }
 
-    const emailRef = useRef<HTMLInputElement | null>(null)
+    const emailRef = watch('email')
     const verifyCodeRef = useRef<HTMLInputElement | null>(null)
+    const [showVerifyInput, setShowVerifyInput] = useState(false)
 
     const handleVerification = async () => {
-        const email = emailRef.current?.value
+        const email = emailRef
         //console.log('emailRef', email)
+        const regExp =
+            /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
+
+        //console.log(email?.match(regExp))
+
+        if (!email || !email.match(regExp)) {
+            alert('올바른 이메일형식을 입력하세요')
+            return
+        }
+
         try {
             await fetch(`http://localhost:3000/api/mailcheck`, {
                 method: 'POST',
@@ -103,23 +126,31 @@ function SignUpForm() {
                 body: JSON.stringify({ email }),
             })
             console.log('인증하기 함수 호출됨')
+            setShowVerifyInput(true)
         } catch (error) {
             console.error('인증하기 함수 에러:', error)
         }
     }
 
     const handleverifyCode = async () => {
-        const email = emailRef.current?.value
+        const email = emailRef
         const verifyCode = verifyCodeRef.current?.value
+        console.log('verifyCode', verifyCode)
         try {
-            await fetch(`http://localhost:3000/api/mailcheck/verify`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            const res = await fetch(
+                `http://localhost:3000/api/mailcheck/verify`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, userCode: verifyCode }),
                 },
-                body: JSON.stringify({ email, userCode: verifyCode }),
-            })
-            console.log('인증하기 함수 호출됨')
+            )
+            if (res.status == 200) {
+                alert('인증완료')
+                setSendSucess(true)
+            }
         } catch (error) {
             console.error('인증하기 함수 에러:', error)
         }
@@ -139,33 +170,33 @@ function SignUpForm() {
                             type="text"
                             id="email"
                             {...register('email')}
-                            ref={emailRef}
                         />
                         <button type="button" onClick={handleVerification}>
                             인증하기
                         </button>
                     </div>
-                    <input placeholder="인증번호" ref={verifyCodeRef}></input>
-
-                    <button type="button" onClick={handleverifyCode}>
-                        인증하기
-                    </button>
+                    {showVerifyInput && (
+                        <div>
+                            <input
+                                placeholder="인증번호"
+                                ref={verifyCodeRef}
+                                disabled={verifySucess ? true : false}
+                            />
+                            <button
+                                type="button"
+                                onClick={handleverifyCode}
+                                className={
+                                    verifySucess
+                                        ? 'pointer-events-none'
+                                        : 'pointer-events-auto'
+                                }
+                            >
+                                인증하기
+                            </button>
+                        </div>
+                    )}
                     {errors.email && <div>{errors.email?.message}</div>}
                 </div>
-                <div className="mb-2">
-                    <div className="flexRBetween mb-5">
-                        <label htmlFor="name" className="basis-1/3 font-black">
-                            nickname
-                        </label>
-                        <SignInput
-                            type="text"
-                            id="name"
-                            {...register('name')}
-                        />
-                    </div>
-                    {errors.name && <div>{errors.name?.message}</div>}
-                </div>
-
                 <div className="mb-2">
                     <div className="flexRBetween">
                         <label
@@ -206,69 +237,7 @@ function SignUpForm() {
                         <div>{errors.confirmPassword?.message}</div>
                     )}
                 </div>
-                <div className="mb-2">
-                    <div className="flexRBetween">
-                        <label
-                            htmlFor="gender"
-                            className="basis-1/3 font-black"
-                        >
-                            gender
-                        </label>
-                        <div className="flex">
-                            <div>
-                                <input
-                                    type="radio"
-                                    id="gender-max"
-                                    value="남"
-                                    {...register('gender')}
-                                ></input>
-                                남
-                            </div>
-                            <div>
-                                <input
-                                    type="radio"
-                                    id="gender-women"
-                                    value="여"
-                                    {...register('gender')}
-                                ></input>
-                                여
-                            </div>
-                        </div>
-                    </div>
-                    {errors.gender && <div>{errors.gender?.message}</div>}
-                </div>
-                <div className="mb-2">
-                    <div className="flexRBetween">
-                        <label
-                            htmlFor="address"
-                            className="basis-1/3 font-black"
-                        >
-                            address
-                        </label>
-                        <SignInput
-                            type="text"
-                            id="address"
-                            {...register('address')}
-                        />
-                    </div>
-                    {errors.address && <div>{errors.address?.message}</div>}
-                </div>
-                <div>
-                    <div className="flexRBetween">
-                        <label
-                            htmlFor="birthday"
-                            className="basis-1/3 font-black"
-                        >
-                            birthday
-                        </label>
-                        <SignInput
-                            type="date"
-                            id="birthday"
-                            {...register('birthday')}
-                        />
-                    </div>
-                    {errors.birthday && <div>{errors.birthday?.message} </div>}
-                </div>
+
                 <button type="submit" className="orangeBtnL w-full mt-6">
                     SignUp
                 </button>
@@ -276,5 +245,4 @@ function SignUpForm() {
         </div>
     )
 }
-
 export { LoginForm, SignUpForm }
