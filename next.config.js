@@ -2,9 +2,9 @@
 const nextConfig = {
     swcMinify: true,
     compiler: {
-        removeConsole: {
-            exclude: ['error'],
-        },
+        //removeConsole: {
+        //    exclude: ['error'],
+        //},
     },
     experimental: {
         swcTraceProfiling: true,
