@@ -1,5 +1,6 @@
 import executeQuery from 'app/_lib/db'
 import bcrypt from 'bcrypt'
+import { NextResponse } from 'next/server'
 import { findUserByEmail } from 'utils/userQueries'
 
 import { User } from '@/_interfaces/IAuth'
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
 
     const result = await signUpUser(user)
 
-    return new Response(JSON.stringify(result), {
+    return NextResponse.json(JSON.stringify(result), {
         headers: { 'Content-Type': 'application/json' },
         status: result.success ? 200 : 400,
     })

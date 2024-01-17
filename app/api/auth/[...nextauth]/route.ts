@@ -6,7 +6,6 @@ export const authOptions: NextAuthOptions = {
     // Configure one or more authentication providers
     providers: [
         CredentialsProvider({
-            id: 'Authcredentials',
             name: 'Credentials',
             credentials: {
                 username: {
@@ -47,14 +46,12 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        //데이터를 넘겨주고 싶으면 jwt 토큰에 데이터를 유지
         async jwt({ token, user }) {
-            if (user) {
-                token.user = user // 사용자 정보를 토큰에 저장합니다
-            }
-            return token
+            return { ...token, ...user }
         },
-        async session({ session, token, user }) {
+
+        async session({ session, token }) {
+            session.user = token as any
             return session
         },
     },
