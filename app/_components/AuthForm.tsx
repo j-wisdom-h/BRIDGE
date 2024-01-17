@@ -4,9 +4,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { logInschema, signUpschema } from 'hooks/validationYup'
 import { signIn } from 'next-auth/react'
 import { useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
-import { SignInput } from '@/_component/Input'
+import { SignInput } from '@/_components/Input'
 import { IsignUp, User } from '@/_interfaces/IAuth'
 
 function LoginForm() {
@@ -14,11 +14,13 @@ function LoginForm() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<User>({ resolver: yupResolver(logInschema) })
+    } = useForm<User>({
+        resolver: yupResolver(logInschema),
+        //defaultValues: async () => fetch('/api-endpoint');
+    })
 
     const onSubmit = async (data: IsignUp) => {
         const { email, password } = data
-        //console.log('AuthForm', data)
         await signIn('credentials', {
             username: email,
             password: password,
@@ -28,38 +30,32 @@ function LoginForm() {
     }
 
     return (
-        <div>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="border-solid border px-8 py-12"
-            >
+        <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="border-solid border px-8 py-12"
+        >
+            <div>
                 <div>
-                    <div>
-                        <label htmlFor="email">email</label>
-                        <SignInput
-                            type="text"
-                            id="email"
-                            {...register('email')}
-                        />
-                    </div>
-                    {errors.email && <div>{errors.email?.message}</div>}
+                    <label htmlFor="email">email</label>
+                    <SignInput type="text" id="email" {...register('email')} />
                 </div>
+                {errors.email && <div>{errors.email?.message}</div>}
+            </div>
+            <div>
                 <div>
-                    <div>
-                        <label htmlFor="password">password</label>
-                        <SignInput
-                            type="password"
-                            id="password"
-                            {...register('password')}
-                        />
-                    </div>
-                    {errors.password && <div>{errors.password?.message}</div>}
+                    <label htmlFor="password">password</label>
+                    <SignInput
+                        type="password"
+                        id="password"
+                        {...register('password')}
+                    />
                 </div>
-                <button type="submit" className="orangeBtnL">
-                    SignIn
-                </button>
-            </form>
-        </div>
+                {errors.password && <div>{errors.password?.message}</div>}
+            </div>
+            <button type="submit" className="orangeBtnL">
+                SignIn
+            </button>
+        </form>
     )
 }
 
@@ -70,6 +66,7 @@ function SignUpForm() {
         formState: { errors },
         watch,
     } = useForm<IsignUp>({
+        mode: 'onChange',
         resolver: yupResolver(signUpschema),
     })
 
@@ -79,7 +76,11 @@ function SignUpForm() {
     // 이메일 인증번호 확인하는 상태
     const [verifySucess, setVerifySucess] = useState(false)
 
-    const onSubmit = async (data: IsignUp) => {
+    const emailRef = watch('email')
+    const verifyCodeRef = useRef<HTMLInputElement | null>(null)
+    const [showVerifyInput, setShowVerifyInput] = useState(false)
+
+    const onSubmit: SubmitHandler<User> = async (data: IsignUp) => {
         const { confirmPassword, ...others } = data
 
         if (verifySucess) {
@@ -99,10 +100,6 @@ function SignUpForm() {
         const body = await res.json()
         console.log(body)
     }
-
-    const emailRef = watch('email')
-    const verifyCodeRef = useRef<HTMLInputElement | null>(null)
-    const [showVerifyInput, setShowVerifyInput] = useState(false)
 
     const handleVerification = async () => {
         const email = emailRef
@@ -156,93 +153,92 @@ function SignUpForm() {
         }
     }
     return (
-        <div>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="min-w-[600px] w-full max-w-md bg-white rounded-2xl shadow-md pt-10 pr-10 pl-10 pb-4 border-8 border-orange text-black"
-            >
-                <div className="mb-2">
-                    <div className="flexRBetween">
-                        <label htmlFor="email" className="basis-1/3 font-black">
-                            email
-                        </label>
+        <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="min-w-[600px] w-full max-w-md h-[700px] bg-white rounded-2xl shadow-md p-10 border-8 border-orange text-black [&>*:not(:last-child)]:mb flex justify-center flex-col"
+        >
+            <div className="mb-2 h-12">
+                <div className="flexRBetween">
+                    <label htmlFor="email" className="basis-1/3 text-lg">
+                        email
+                    </label>
+                    <div className="basis-2/3 flex max-w-[66.666667%]">
                         <SignInput
                             type="text"
                             id="email"
+                            placeholder="Email"
+                            className="text-lg"
                             {...register('email')}
                         />
-                        <button type="button" onClick={handleVerification}>
+                        <button
+                            type="button"
+                            className="orangeBtnS"
+                            onClick={handleVerification}
+                        >
+                            메일인증
+                        </button>
+                    </div>
+                </div>
+                {showVerifyInput && (
+                    <div>
+                        <input
+                            placeholder="인증번호"
+                            ref={verifyCodeRef}
+                            disabled={verifySucess ? true : false}
+                        />
+                        <button
+                            type="button"
+                            onClick={handleverifyCode}
+                            className={
+                                verifySucess
+                                    ? 'pointer-events-none'
+                                    : 'pointer-events-auto'
+                            }
+                        >
                             인증하기
                         </button>
                     </div>
-                    {showVerifyInput && (
-                        <div>
-                            <input
-                                placeholder="인증번호"
-                                ref={verifyCodeRef}
-                                disabled={verifySucess ? true : false}
-                            />
-                            <button
-                                type="button"
-                                onClick={handleverifyCode}
-                                className={
-                                    verifySucess
-                                        ? 'pointer-events-none'
-                                        : 'pointer-events-auto'
-                                }
-                            >
-                                인증하기
-                            </button>
-                        </div>
-                    )}
-                    {errors.email && <div>{errors.email?.message}</div>}
+                )}
+                {errors.email && <p>{errors.email?.message}</p>}
+            </div>
+            <div className="mb-2 h-12">
+                <div className="flexRBetween">
+                    <label htmlFor="password" className="basis-1/3 text-lg">
+                        password
+                    </label>
+                    <SignInput
+                        type="password"
+                        id="password"
+                        className="w-full text-lg"
+                        placeholder="Password"
+                        {...register('password')}
+                    />
                 </div>
-                <div className="mb-2">
-                    <div className="flexRBetween">
-                        <label
-                            htmlFor="password"
-                            className="basis-1/3 font-black"
-                        >
-                            password
-                        </label>
-                        <div className="inputBorder basis-2/3">
-                            <SignInput
-                                type="password"
-                                id="password"
-                                className="w-full"
-                                {...register('password')}
-                            />
-                            {errors.password && (
-                                <div>{errors.password?.message}</div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                {errors.password && <p>{errors.password?.message}</p>}
+            </div>
 
-                <div className="mb-2">
-                    <div className="flexRBetween">
-                        <label
-                            htmlFor="password"
-                            className="basis-1/3 font-black"
-                        >
-                            password confirm
-                        </label>
-                        <SignInput
-                            type="password"
-                            id="confirmPassword"
-                            {...register('confirmPassword')}
-                        />
-                    </div>
-                    {errors.confirmPassword && (
-                        <div>{errors.confirmPassword?.message}</div>
-                    )}
+            <div className="mb-2 h-12">
+                <div className="flexRBetween">
+                    <label htmlFor="password" className="basis-1/3 text-lg">
+                        password confirm
+                    </label>
+                    <SignInput
+                        type="password"
+                        id="confirmPassword"
+                        className="text-lg"
+                        placeholder="Password"
+                        {...register('confirmPassword')}
+                    />
                 </div>
+                {errors.confirmPassword && (
+                    <p>{errors.confirmPassword?.message}</p>
+                )}
+            </div>
 
-                <button type="submit" className="orangeBtnL w-full mt-6">
-                    SignUp
-                </button>
-            </form>
-        </div>
+            <button type="submit" className="orangeBtnL w-full mt-12">
+                SignUp
+            </button>
+        </form>
     )
 }
 export { LoginForm, SignUpForm }
