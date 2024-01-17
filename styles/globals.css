@@ -2,15 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: 'Pretendard Variable';
+    font-weight: normal;
+    font-display: swap;
+    src: url(../public/font/PretendardVariable.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'Pretendard Variable';
+    font-weight: 600;
+    font-display: swap;
+    src: url(../public/font/PretendardVariable.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'Pretendard Variable';
+    font-weight: 900;
+    font-display: swap;
+    src: url(../public/font/PretendardVariable.woff2) format('woff2');
+}
+
 @layer base {
     html,
     body {
         padding: 0;
         margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
-            'Pretendard Variable', Pretendard, Roboto, 'Noto Sans KR',
-            'Segoe UI', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji',
-            'Segoe UI Symbol', sans-serif;
+        font-family:
+            'Pretendard Variable',
+            Pretendard,
+            -apple-system,
+            BlinkMacSystemFont,
+            'Apple SD Gothic Neo',
+            Roboto,
+            'Noto Sans KR',
+            'Segoe UI',
+            'Malgun Gothic',
+            'Apple Color Emoji',
+            'Segoe UI Emoji',
+            'Segoe UI Symbol',
+            sans-serif;
         line-height: 1.6;
         font-size: 18px;
         height: 100%;
@@ -46,6 +75,9 @@
     }
     .orangeBtnL {
         @apply bg-orange text-white rounded-lg w-28 text-2xl p-1.5;
+    }
+    .orangeBtnS {
+        @apply bg-orange text-white rounded-lg w-28 text-sm p-1.5;
     }
     .centerMiddle {
         @apply flex flex-col justify-center items-center h-full;

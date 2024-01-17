@@ -9,6 +9,7 @@ export function PreloadResources() {
         <link
             rel="preload"
             href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+            crossOrigin="anonymous"
         />,
     )
     //head.render(<link rel='preconnect' href='...' />)
