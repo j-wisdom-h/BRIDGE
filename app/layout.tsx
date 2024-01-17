@@ -2,9 +2,9 @@ import '../styles/globals.css'
 
 import { Metadata } from 'next'
 
-import Footer from '@/_component/Footer'
-import Header from '@/_component/Header'
-import Providers from '@/_component/Provider'
+import Footer from '@/_components/Footer'
+import Header from '@/_components/Header'
+import Providers from '@/_components/Provider'
 
 export const metadata: Metadata = {
     title: 'Bridge',
@@ -22,8 +22,8 @@ export default function RootLayout({
                 <Providers>
                     <Header />
                     {children}
+                    <Footer />
                 </Providers>
-                <Footer />
             </body>
         </html>
     )
