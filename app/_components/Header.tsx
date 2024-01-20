@@ -1,16 +1,17 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
-import { signOut, useSession } from 'next-auth/react'
 
-const Header = () => {
-    const { data: session } = useSession()
+import SideBar from '@/_components/SideBar'
 
+function Header() {
     return (
-        <header className="absolute top-0 right-0 left-0 bg-orange h-14 flex items-center justify-between">
-            <div className="flex items-center ml-4">
-                <Link href="/">
+        <header className="flex items-center justify-between relative bg-orange h-12">
+            <Link href="/" className="flex items-center h-full pl-4">
+                <h1 className="text-4xl text-white text-center">BRIGE</h1>
+            </Link>
+            <nav className="flex items-center justify-end h-full">
+                {/* <Link href="/">
                     <Image
                         src="/image/logo.png"
                         alt="Picture of the logo"
@@ -18,30 +19,9 @@ const Header = () => {
                         height={40}
                         className="ml-1.5"
                     />
-                </Link>
-            </div>
-            <div className="flex mr-4">
-                {session ? (
-                    <button
-                        onClick={() => signOut()}
-                        className="text-white mr-4"
-                    >
-                        Sign out
-                    </button>
-                ) : (
-                    <>
-                        <Link
-                            href="/signup"
-                            className="largeBoldWhiteTxt mr-1.5"
-                        >
-                            Signup
-                        </Link>
-                        <Link href="/signin" className="largeBoldWhiteTxt">
-                            Signin
-                        </Link>
-                    </>
-                )}
-            </div>
+                </Link>  */}
+                <SideBar />
+            </nav>
         </header>
     )
 }

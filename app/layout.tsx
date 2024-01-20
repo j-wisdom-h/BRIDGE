@@ -18,12 +18,23 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
+            {/* <head>
+                <link
+                    rel="preload"
+                    href="font/Pretendard-Regular.subset.woff2"
+                    as="font"
+                    type="font/woff2"
+                    crossOrigin="anonymous"
+                />
+            </head> */}
             <body>
-                <Providers>
-                    <Header />
-                    {children}
-                    <Footer />
-                </Providers>
+                <div className="w-full h-full">
+                    <Providers>
+                        <Header />
+                        <main className="h-full">{children}</main>
+                        <Footer />
+                    </Providers>
+                </div>
             </body>
         </html>
     )
