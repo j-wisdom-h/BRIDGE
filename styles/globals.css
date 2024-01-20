@@ -3,22 +3,28 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: 'Pretendard Variable';
+    font-family: 'Pretendard';
     font-weight: normal;
     font-display: swap;
-    src: url(../public/font/PretendardVariable.woff2) format('woff2');
+    src:
+        local('Pretendard Regular'),
+        url(../public/font/Pretendard-Regular.subset.woff2) format('woff2');
 }
 @font-face {
-    font-family: 'Pretendard Variable';
+    font-family: 'Pretendard';
     font-weight: 600;
     font-display: swap;
-    src: url(../public/font/PretendardVariable.woff2) format('woff2');
+    src:
+        local('Pretendard SemiBold'),
+        url(../public/font/Pretendard-SemiBold.subset.woff2) format('woff2');
 }
 @font-face {
-    font-family: 'Pretendard Variable';
+    font-family: 'Pretendard';
     font-weight: 900;
     font-display: swap;
-    src: url(../public/font/PretendardVariable.woff2) format('woff2');
+    src:
+        local('Pretendard Black'),
+        url(../public/font/Pretendard-Black.subset.woff2) format('woff2');
 }
 
 @layer base {
@@ -27,7 +33,7 @@
         padding: 0;
         margin: 0;
         font-family:
-            'Pretendard Variable',
+            Pretendard Variable,
             Pretendard,
             -apple-system,
             BlinkMacSystemFont,
@@ -67,8 +73,8 @@
     .flexRBetween {
         @apply flex flex-row justify-between;
     }
-    .largeBoldWhiteTxt {
-        @apply text-lg font-bold text-white self-center;
+    .semiBoldWhiteTxt {
+        @apply text-white text-center w-16 text-sm font-semibold self-center;
     }
     .inputBorder {
         @apply border border-solid border-gray-300 rounded-lg;
