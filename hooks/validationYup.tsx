@@ -4,7 +4,10 @@ import * as yup from 'yup'
 export const signUpschema = yup.object().shape({
     email: yup
         .string()
-        .email('이메일 형식을 맞춰서 입력해주세요.')
+        .matches(
+            /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
+            '이메일 형식을 맞춰서 입력해주세요.',
+        )
         .required('이메일을 필수로 입력해주세요.'),
     password: yup
         .string()
@@ -27,7 +30,10 @@ export const signUpschema = yup.object().shape({
 export const logInschema = yup.object().shape({
     email: yup
         .string()
-        .email('이메일 형식을 맞춰서 입력해주세요.')
+        .matches(
+            /^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+            '이메일 형식을 맞춰서 입력해주세요.',
+        )
         .required('이메일을 필수로 입력해주세요.'),
     password: yup
         .string()
