@@ -1,12 +1,11 @@
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import KakaoProvider from 'next-auth/providers/kakao'
+import GoogleProvider from 'next-auth/providers/google'
 
 export const authOptions: NextAuthOptions = {
     // Configure one or more authentication providers
     providers: [
         CredentialsProvider({
-            id: 'Authcredentials',
             name: 'Credentials',
             credentials: {
                 username: {
@@ -18,8 +17,8 @@ export const authOptions: NextAuthOptions = {
             },
 
             async authorize(credentials, req): Promise<any> {
+                // console.log(credentials)
                 try {
-                    console.log(credentials)
                     const res = await fetch(
                         `${process.env.NEXTAUTH_URL}/api/login`,
                         {
@@ -37,24 +36,39 @@ export const authOptions: NextAuthOptions = {
                     // Any object returned will be saved in `user` property of the JWT
                     return user || null
                 } catch (e) {
-                    throw new Error(e.response)
+                    throw new Error(e.response.data.msg)
                 }
             },
         }),
-        KakaoProvider({
-            clientId: process.env.KAKAO_CLIENT_ID!,
-            clientSecret: process.env.KAKAO_SECRET!,
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID || '',
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
         }),
     ],
     callbacks: {
-        //데이터를 넘겨주고 싶으면 jwt 토큰에 데이터를 유지
-        async jwt({ token, user }) {
-            if (user) {
-                token.user = user // 사용자 정보를 토큰에 저장합니다
+        async jwt({ token, user, account, profile }) {
+            if (profile && account) {
+                // 프로필 정보 설정
+                //console.log(profile)
+                const { name, email, picture, ...others } = profile
+                token = {
+                    name,
+                    email,
+                    image: picture,
+                    accessToken: account.access_token,
+                    accessTokenExpires: account.expires_at,
+                    refreshToken: account.refresh_token,
+                }
+            } else if (user) {
+                // token.accessToken = { 사용자액세스토큰 }
+                token.email = user.email
             }
+
             return token
         },
-        async session({ session, token, user }) {
+        async session({ session, token }) {
+            session.user = token as any
+            //console.log('sesson', session)
             return session
         },
     },
