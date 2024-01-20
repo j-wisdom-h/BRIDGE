@@ -20,7 +20,8 @@
         "baseUrl": ".",
         "paths": {
             "@/_components/*": ["app/_components/*"],
-            "@/_interfaces/*": ["app/_interfaces/*"]
+            "@/_interfaces/*": ["app/_interfaces/*"],
+            "react": ["node_modules/@types/react"]
         },
         "allowImportingTsExtensions": true,
         "strictNullChecks": true
