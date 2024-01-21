@@ -9,12 +9,15 @@ export default function Signup() {
                 LET’S START BRIDGE!
             </h2>
             <SignUpForm />
-            <Link
-                href="/signin"
-                className="underline underline -offset-1 text-gray-400"
-            >
-                Sign in
-            </Link>
+            <div className="min-w-[400px] text-sm text-center leading-[1.8] mt-2">
+                <span className="text-gray-400 mr-1">로그인하러 가기</span>
+                <Link
+                    href="/signin"
+                    className="underline underline-offset-1 text-gray-400"
+                >
+                    Sign in
+                </Link>
+            </div>
         </div>
     )
 }
