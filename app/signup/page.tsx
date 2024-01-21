@@ -11,10 +11,7 @@ export default function Signup() {
             <SignUpForm />
             <div className="min-w-[400px] text-sm text-center leading-[1.8] mt-2">
                 <span className="text-gray-400 mr-1">로그인하러 가기</span>
-                <Link
-                    href="/signin"
-                    className="underline underline-offset-1 text-gray-400"
-                >
+                <Link href="/signin" className="link">
                     Sign in
                 </Link>
             </div>

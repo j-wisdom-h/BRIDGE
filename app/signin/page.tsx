@@ -13,10 +13,7 @@ function Signin() {
                 <span className="text-gray-400 mr-1">
                     아직 회원이 아니신가요?
                 </span>
-                <Link
-                    href="/signup"
-                    className="underline underline-offset-1 text-gray-400 mr-2 "
-                >
+                <Link href="/signup" className="link mr-2 ">
                     Sign up
                 </Link>
             </div>
