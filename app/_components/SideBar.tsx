@@ -1,25 +1,8 @@
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
-import toast from 'react-hot-toast'
 
 export default function SideBar() {
     const { data: session, status } = useSession()
-    const router = useRouter()
-
-    const handleSignOut = async () => {
-        try {
-            await signOut()
-            toast.success('로그아웃 완료', {
-                duration: 2000,
-            })
-        } catch (error) {
-            toast.error('로그아웃 실패'),
-                {
-                    duration: 2000,
-                }
-        }
-    }
     return (
         <div className="navbar">
             <div className="navbar-end w-full">
@@ -33,7 +16,7 @@ export default function SideBar() {
                             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 right-0"
                         >
                             <li>
-                                <button onClick={handleSignOut}>
+                                <button onClick={() => signOut()}>
                                     Sign out
                                 </button>
                             </li>

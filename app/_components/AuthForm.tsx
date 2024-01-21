@@ -3,17 +3,14 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { logInschema, signUpschema } from 'hooks/validationYup'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import googleLogin from 'public/image/google.png'
 import { useRef, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
 
 import { IsignUp, User } from '@/_interfaces/IAuth'
 
 function LoginForm() {
-    const router = useRouter()
     const {
         register,
         handleSubmit,
@@ -26,7 +23,6 @@ function LoginForm() {
 
     const onSubmit = async (data: IsignUp) => {
         const { email, password } = data
-
         const res = await signIn('credentials', {
             username: email,
             password: password,
@@ -35,15 +31,7 @@ function LoginForm() {
         })
         // 에러 핸들링
         if (res?.status === 401) {
-            toast.error('아이디 혹은 비밀번호가 일치하지 않습니다.')
-        } else {
-            toast.success('로그인 성공', {
-                duration: 2000,
-                style: {
-                    minWidth: '250px',
-                },
-            })
-            router.push('/')
+            alert('아이디 혹은 비밀번호가 일치하지 않습니다.')
         }
     }
 
