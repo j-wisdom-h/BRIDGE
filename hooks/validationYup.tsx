@@ -31,7 +31,7 @@ export const logInschema = yup.object().shape({
     email: yup
         .string()
         .matches(
-            /^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+            /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
             '이메일 형식을 맞춰서 입력해주세요.',
         )
         .required('이메일을 필수로 입력해주세요.'),
