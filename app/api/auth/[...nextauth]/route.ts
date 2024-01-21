@@ -46,6 +46,14 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
+        async signIn({ user, account, profile, email, credentials }) {
+            const isAllowedToSignIn = true
+            if (isAllowedToSignIn) {
+                return true
+            } else {
+                return false
+            }
+        },
         async jwt({ token, user, account, profile }) {
             if (profile && account) {
                 // 프로필 정보 설정
