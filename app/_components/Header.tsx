@@ -8,7 +8,7 @@ import SideBar from '@/_components/SideBar'
 function Header() {
     const { data: session, status } = useSession()
     return (
-        <header className="flex items-center justify-between relative bg-orange h-12">
+        <header className="flex items-center justify-between relative bg-orange-500 h-12">
             <Link href="/" className="flex items-center h-full pl-4">
                 <h1 className="text-4xl text-white text-center">BRIGE</h1>
             </Link>
