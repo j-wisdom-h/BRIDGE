@@ -1,4 +1,4 @@
 export default function Loading() {
     // You can add any UI inside Loading, including a Skeleton.
-    return 'loading'
+    return <span className="loading loading-dots loading-lg" />
 }
