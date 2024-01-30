@@ -9,7 +9,7 @@ export async function findUserByEmail(email: string) {
     const values = [email]
 
     try {
-        const users: RowDataPacket = await executeQuery(sql, values)
+        const users = await executeQuery<RowDataPacket[]>(sql, values)
         return users[0]
     } catch (error) {
         console.error('Error finding user by email:', error)
