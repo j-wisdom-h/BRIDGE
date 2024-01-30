@@ -37,7 +37,7 @@ export default function SideBar({ session, status }) {
 }
 
 export function Avatar({ user }) {
-    const userImageURL = user?.image || 'image/logo.png'
+    const userImageURL = user?.image || '/image/logo.png'
     const imageStyle = { borderRadius: '50%' }
     return (
         <div className="avatar">
@@ -45,8 +45,8 @@ export function Avatar({ user }) {
                 <Image
                     src={userImageURL}
                     fill={true}
-                    style={imageStyle}
                     quality={100}
+                    style={imageStyle}
                     alt="avatar"
                 />
             </div>
