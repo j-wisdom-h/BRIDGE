@@ -26,65 +26,63 @@ function LoginForm() {
         const res = await signIn('credentials', {
             username: email,
             password: password,
-            redirect: false,
+            redirect: true,
             callbackUrl: '/',
         })
-        // 에러 핸들링
+
         if (res?.status === 401) {
             alert('아이디 혹은 비밀번호가 일치하지 않습니다.')
         }
     }
 
+    const formFields: {
+        label: string
+        type: string
+        placeholder: string
+        name: 'email' | 'password'
+    }[] = [
+        {
+            label: 'email',
+            type: 'text',
+            placeholder: 'Email',
+            name: 'email',
+        },
+        {
+            label: 'password',
+            type: 'password',
+            placeholder: 'Password',
+            name: 'password',
+        },
+    ]
+
     return (
         <div className="w-[380px] min-h-[250px] bg-white rounded-2xl shadow-md px-10 pt-10 pb-5 border-2 border-darkgray text-black flex justify-center flex-col">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <label
-                    htmlFor="email"
-                    className="form-control w-full max-w-xs relative"
-                >
-                    <div className="label pb-0">
-                        <span className="label-text">email</span>
-                    </div>
-                    <input
-                        type="text"
-                        id="email"
-                        placeholder="Email"
-                        className="input input-bordered input-sm w-full max-w-xs"
-                        {...register('email')}
-                    />
-                    <div className="label h-4 pb-0 ">
-                        {errors.email && (
-                            <span className="label-text-alt text-red-400">
-                                {errors.email?.message}
-                            </span>
-                        )}
-                    </div>
-                </label>
-
-                <label
-                    htmlFor="password"
-                    className="form-control w-full max-w-xs"
-                >
-                    <div className="label pb-0">
-                        <span className="label-text">password</span>
-                    </div>
-                    <input
-                        type="password"
-                        id="password"
-                        className="input input-bordered input-sm w-full max-w-xs"
-                        placeholder="Password"
-                        {...register('password')}
-                    />
-                    <div className="label h-4 pb-0">
-                        <span className="label-text-alt">
-                            {errors.password && (
+                {formFields.map((field) => (
+                    <label
+                        key={field.name}
+                        htmlFor={field.name}
+                        className="form-control w-full max-w-xs relative"
+                    >
+                        <div className="label pb-0">
+                            <span className="label-text">{field.label}</span>
+                        </div>
+                        <input
+                            type={field.type}
+                            id={field.name}
+                            placeholder={field.placeholder}
+                            className="input input-bordered input-sm w-full max-w-xs"
+                            {...register(field.name)}
+                        />
+                        <div className="label h-4 pb-0 ">
+                            {errors[field.name] && (
                                 <span className="label-text-alt text-red-400">
-                                    {errors.password?.message}
+                                    {errors[field.name]?.message}
                                 </span>
                             )}
-                        </span>
-                    </div>
-                </label>
+                        </div>
+                    </label>
+                ))}
                 <button type="submit" className="orangeBtnL mt-4 mb-2">
                     Sign In
                 </button>
@@ -134,26 +132,27 @@ function SignUpForm() {
             return
         }
         //console.log(data)
-        const res = await fetch(`http://localhost:3000/api/user`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                ...others,
-            }),
-        })
-        const body = await res.json()
-        console.log(body)
+        try {
+            const res = await fetch(`http://localhost:3000/api/user`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...others,
+                }),
+            })
+            const body = await res.json()
+            console.log(body)
+        } catch (error) {
+            console.error('회원가입 에러:', error)
+        }
     }
 
     const handleVerification = async () => {
         const email = emailRef
-        //console.log('emailRef', email)
         const regExp =
             /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
-
-        //console.log(email?.match(regExp))
 
         if (!email || !email.match(regExp)) {
             alert('올바른 이메일형식을 입력하세요')
@@ -198,103 +197,85 @@ function SignUpForm() {
             console.error('인증하기 함수 에러:', error)
         }
     }
+
+    const formFields = [
+        { label: 'Email', type: 'text', name: 'email' },
+        { label: 'Password', type: 'password', name: 'password' },
+        { label: 'confirmPassword', type: 'password', name: 'confirmPassword' },
+    ].map(
+        ({ label, type, name }) =>
+            ({
+                label,
+                type,
+                id: name,
+                placeholder: label,
+                name: name as 'email' | 'password' | 'confirmPassword',
+            }) as const,
+    )
+
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
             className="min-w-[400px] w-full max-w-md bg-white rounded-2xl shadow-md p-10 border-2 border-darkgray text-black flex justify-center flex-col"
         >
-            <label className="form-control w-full max-w-xs relative">
-                <div className="label pb-0">
-                    <span className="label-text">email</span>
-                </div>
-                <input
-                    type="text"
-                    id="email"
-                    placeholder="Email"
-                    className="input input-bordered input-sm w-full max-w-xs text-xs"
-                    {...register('email')}
-                />
-                <button
-                    type="button"
-                    className="absolute top-7 right-0 bg-orange text-white rounded-md w-16 text-xs h-8"
-                    onClick={handleVerification}
-                >
-                    메일인증
-                </button>
-                <div className="label h-4 pb-0">
-                    <span className="label-text-alt">
-                        {errors.email && (
-                            <span className="label-text-alt text-red-400">
-                                {errors.email?.message}
-                            </span>
-                        )}
-                    </span>
-                </div>
-            </label>
-            {showVerifyInput && (
-                <div>
-                    <input
-                        placeholder="인증번호"
-                        ref={verifyCodeRef}
-                        disabled={verifySucess ? true : false}
-                    />
-                    <button
-                        type="button"
-                        onClick={handleverifyCode}
-                        className={
-                            verifySucess
-                                ? 'pointer-events-none'
-                                : 'pointer-events-auto'
-                        }
+            {formFields.map((field) => (
+                <div key={field.name} className="relative">
+                    <label
+                        htmlFor={field.id}
+                        className="form-control w-full max-w-xs"
                     >
-                        인증하기
-                    </button>
-                </div>
-            )}
-            <label htmlFor="password" className="form-control w-full max-w-xs">
-                <div className="label pb-0">
-                    <span className="label-text">password</span>
-                </div>
-                <input
-                    type="password"
-                    id="password"
-                    className="input input-bordered input-sm w-full max-w-xs text-xs"
-                    placeholder="Password"
-                    {...register('password')}
-                />
-                <div className="label h-4 pb-0">
-                    <span className="label-text-alt">
-                        {errors.password && (
-                            <span className="label-text-alt text-red-400">
-                                {errors.password?.message}
-                            </span>
+                        <div className="label pb-0">
+                            <span className="label-text">{field.label}</span>
+                        </div>
+                        <input
+                            type={field.type}
+                            id={field.id}
+                            placeholder={field.placeholder}
+                            className="input input-bordered input-sm w-full max-w-xs text-xs"
+                            {...register(field.name)}
+                        />
+                        {field.id === 'email' && (
+                            <button
+                                type="button"
+                                className="absolute top-7 right-0 bg-orange text-white rounded-md w-16 text-xs h-8"
+                                onClick={handleVerification}
+                            >
+                                메일인증
+                            </button>
                         )}
-                    </span>
-                </div>
-            </label>
-
-            <label htmlFor="password" className="form-control w-full max-w-xs">
-                <div className="label pb-0">
-                    <span className="label-text">password confirm</span>
-                </div>
-                <input
-                    id="confirmPassword"
-                    type="password"
-                    className="input input-bordered input-sm w-full max-w-xs"
-                    placeholder="Password"
-                    {...register('confirmPassword')}
-                />
-                <div className="label h-4 pb-0">
-                    <span className="label-text-alt">
-                        {errors.confirmPassword && (
-                            <span className="label-text-alt text-red-400">
-                                {errors.confirmPassword?.message}
+                        <div className="label h-4 pb-0">
+                            <span className="label-text-alt">
+                                {errors[field.name] && (
+                                    <span className="label-text-alt text-red-400">
+                                        {errors[field.name]?.message}
+                                    </span>
+                                )}
                             </span>
-                        )}
-                    </span>
+                        </div>
+                    </label>
+                    {field.id === 'email' && showVerifyInput && (
+                        <div className="flex justify-between">
+                            <input
+                                placeholder="인증번호"
+                                ref={verifyCodeRef}
+                                disabled={verifySucess ? true : false}
+                                className="focus:outline-none border-b-2 max-w-xs text-xs grow"
+                            />
+                            <button
+                                type="button"
+                                onClick={handleverifyCode}
+                                className={`${
+                                    verifySucess
+                                        ? 'pointer-events-none'
+                                        : 'pointer-events-auto'
+                                } text-xs w-14 text-white bg-orange-500 hover:bg-orange-400 rounded-lg ml-2 h-6 grow-0`}
+                            >
+                                인증하기
+                            </button>
+                        </div>
+                    )}
                 </div>
-            </label>
-
+            ))}
             <button type="submit" className="orangeBtnL mt-6">
                 Sign up
             </button>
