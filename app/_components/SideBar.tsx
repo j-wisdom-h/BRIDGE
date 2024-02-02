@@ -21,10 +21,13 @@ export default function SideBar({ session, status }) {
                         className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 right-0"
                     >
                         <li>
-                            <a>Portfolio</a>
+                            <Link href="/profile">회원정보</Link>
                         </li>
                         <li>
-                            <a>About</a>
+                            <Link href="/mypost">내 게시글</Link>
+                        </li>
+                        <li>
+                            <Link href="/mystudy">내 스터디</Link>
                         </li>
                         <li>
                             <button onClick={() => signOut()}>Sign out</button>
