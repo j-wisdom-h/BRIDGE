@@ -21,7 +21,7 @@
         "paths": {
             "@/_components/*": ["app/_components/*"],
             "@/_interfaces/*": ["app/_interfaces/*"],
-            "react": ["node_modules/@types/react"]
+            "@/_lib/*": ["app/_lib/*"]
         },
         "allowImportingTsExtensions": true,
         "strictNullChecks": true
