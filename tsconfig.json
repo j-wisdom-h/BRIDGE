@@ -21,11 +21,17 @@
         "paths": {
             "@/_components/*": ["app/_components/*"],
             "@/_interfaces/*": ["app/_interfaces/*"],
-            "react": ["node_modules/@types/react"]
+            "@/_lib/*": ["app/_lib/*"]
         },
         "allowImportingTsExtensions": true,
         "strictNullChecks": true
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+    "include": [
+        "next-env.d.ts",
+        "types/next-auth.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts"
+    ],
     "exclude": ["node_modules", ".next"]
 }

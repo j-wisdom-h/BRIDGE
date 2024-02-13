@@ -2,18 +2,23 @@
 
 import ReactDOM from 'react-dom/client'
 
-export function PreloadResources() {
-    const head = ReactDOM.createRoot(document.head)
-
-    head.render(
-        <link
-            rel="preload"
-            href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
-            crossOrigin="anonymous"
-        />,
-    )
-    //head.render(<link rel='preconnect' href='...' />)
-    //head.render(<link rel='prefetchDNS' href='...' />)
-
+export default function PreloadResources() {
+    // ReactDOM.preload('../public/font/Pretendard-Black.subset.woff2', {
+    //     as: 'font',
+    //     type: 'font/woff2',
+    //     crossorigin: 'anonymous',
+    // })
+    // ReactDOM.preload('../public/font/Pretendard-SemiBold.subset.woff2', {
+    //     as: 'font',
+    //     type: 'font/woff2',
+    //     crossorigin: 'anonymous',
+    // })
+    // ReactDOM.preload('../../public/font/Pretendard-Regular.subset.woff2', {
+    //     as: 'font',
+    //     type: 'font/woff2',
+    //     crossorigin: 'anonymous',
+    // })
+    // ReactDOM.preconnect('...', { crossOrigin: '...' })
+    // ReactDOM.prefetchDNS('...')
     return null
 }
