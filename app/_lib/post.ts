@@ -1,8 +1,5 @@
-'use server'
-
-import { authOptions } from 'app/api/auth/[...nextauth]/route'
 import { redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth'
+import { getAccessToken, getUserMail } from 'utils/getUser'
 
 async function getAllPosts() {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
@@ -20,12 +17,21 @@ async function getPost(postId: number) {
     return post[0]
 }
 
+async function getMyPost() {
+    const email = await getUserMail()
+    const res = await fetch(
+        `http://localhost:3000/api/mypage/myposts?email=${email}`,
+    )
+    const posts = await res.json()
+    return posts
+}
+
 async function deletePost(postId: number) {
-    const session = await getServerSession(authOptions)
+    const accessToken = await getAccessToken()
 
     const headers: HeadersInit = {
         'Content-Type': 'application/json',
-        Authorization: `${session?.user.accessToken}`,
+        Authorization: `${accessToken}`,
     }
 
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts/${postId}`, {
@@ -37,4 +43,4 @@ async function deletePost(postId: number) {
     redirect('/')
 }
 
-export { deletePost, getAllPosts, getPost }
+export { deletePost, getAllPosts, getMyPost, getPost }
