@@ -1,17 +1,19 @@
-import { getComments } from 'app/_lib/coment'
-import { authOptions } from 'app/api/auth/[...nextauth]/route'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getServerSession } from 'next-auth'
+import { getUserMail } from 'utils/getUser'
+import { v4 as uuidv4 } from 'uuid'
 
-import { Deletebutton } from '@/_components/Input'
-
-import { getPost } from '../../_lib/post'
+import Comment from '@/_components/Comment'
+import CommentForm from '@/_components/CommentForm'
+import { Deletebutton } from '@/_components/Modal'
+import { getComments } from '@/_lib/comment'
+import { getPost } from '@/_lib/post'
 
 export default async function Read({ params }: { params: { id: number } }) {
-    const post = await getPost(params.id)
-    const comments = await getComments(params.id)
-    const session = await getServerSession(authOptions)
+    const postId = params.id
+    const post = await getPost(postId)
+    const comments = await getComments(postId)
+    const email = await getUserMail()
 
     return (
         <>
@@ -49,7 +51,7 @@ export default async function Read({ params }: { params: { id: number } }) {
                             alt="avatar"
                         />
                     </div>
-                    {post.email === session?.user?.email && (
+                    {post.email === email && (
                         <div className="grow flex justify-end items-end">
                             <Link
                                 href={`/post/${params.id}`}
@@ -57,7 +59,7 @@ export default async function Read({ params }: { params: { id: number } }) {
                             >
                                 수정하기
                             </Link>
-                            <Deletebutton postId={params.id} />
+                            <Deletebutton postId={params.id} type="post" />
                         </div>
                     )}
                 </div>
@@ -66,33 +68,22 @@ export default async function Read({ params }: { params: { id: number } }) {
                     {comments.length === 0 ? (
                         <p className="py-2">작성된 댓글이 없습니다.</p>
                     ) : (
-                        comments.map((comment) => {
-                            //comment.id
-                            return (
-                                <div
-                                    key={comment.id}
-                                    className="border border-gray-200 rounded-lg p-2 mt-2"
-                                >
-                                    <p>댓글작성자: {comment.email}</p>
-                                    <div>{comment.avatar}</div>
-                                    <div>{comment.content}</div>
-                                    <button className="underline">수정</button>
-                                    <button className="underline">삭제</button>
-                                </div>
+                        comments
+                            .filter(
+                                (comment) => comment.parent_comment_id === null,
                             )
-                        })
+                            .map((comment) => (
+                                <Comment
+                                    key={uuidv4()}
+                                    comment={comment}
+                                    depth={0}
+                                    comments={comments}
+                                    postId={postId}
+                                />
+                            ))
                     )}
-                    <form>
-                        <textarea
-                            className="w-full"
-                            rows={4}
-                            placeholder="댓글을 입력하세요..."
-                        />
-                        <button className="btn btn-outline btn-warning">
-                            댓글작성
-                        </button>
-                    </form>
                 </div>
+                <CommentForm postId={postId} parentId={null} type="comment" />
             </div>
         </>
     )

@@ -1,14 +1,13 @@
 'use server'
-import { authOptions } from 'app/api/auth/[...nextauth]/route'
+
 import { ResultSetHeader } from 'mysql2'
+import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth'
+import { getUserId } from 'utils/getUser'
 
 import executeQuery from './db'
 
 async function formDateValues(formdata: FormData) {
-    const session = await getServerSession(authOptions)
-    const userId = session?.user?.id
     const desiredKeyOrder = [
         'title',
         'content',
@@ -26,7 +25,7 @@ async function formDateValues(formdata: FormData) {
         }
         return String(value)
     })
-    values.push(Number(userId))
+    values.push(Number(await getUserId()))
     return values
 }
 
@@ -54,7 +53,24 @@ async function updatePost(postId, formdata: FormData) {
     } catch (err) {
         throw new Error('포스터 수정 실패')
     }
+    revalidatePath(`/read/${postId}`)
     redirect(`/read/${postId}`)
 }
 
-export { createPost, updatePost }
+async function createComment(postId, parentId, formdata: FormData) {
+    const content = formdata.get('content')
+    const userId = await getUserId()
+    const sql =
+        'INSERT INTO bridge.comment (post_id, parent_comment_id, author_id, content) VALUES (?, ?, ?, ?)'
+    // console.log('postId', postId, 'parentId', parentId, 'userId', userId)
+    const values = [postId, parentId, userId, content]
+
+    try {
+        await executeQuery<ResultSetHeader>(sql, [...values])
+    } catch (err) {
+        throw new Error('댓글 게시 실패')
+    }
+    redirect(`/read/${postId}`)
+}
+
+export { createComment, createPost, updatePost }
