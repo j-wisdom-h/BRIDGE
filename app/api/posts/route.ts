@@ -9,8 +9,6 @@ export async function GET(request: NextRequest) {
                     FROM bridge.user
                     JOIN bridge.post ON bridge.user.id = bridge.post.author_id ORDER BY created_at DESC LIMIT ${limit}`
     const posts = await executeQuery<RowDataPacket[]>(sql, [])
-
     const transformedPosts = dateFormatting(posts)
-
     return NextResponse.json(transformedPosts)
 }

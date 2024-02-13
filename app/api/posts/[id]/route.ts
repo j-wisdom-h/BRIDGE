@@ -8,8 +8,6 @@ export async function GET(
     { params }: { params: { id: number } },
 ) {
     const id = params.id
-    // console.log(request.nextUrl.searchParams)
-    // const id = await request.nextUrl.searchParams.get('id')
     const sql = `SELECT * FROM bridge.post JOIN bridge.user ON bridge.user.id = bridge.post.author_id WHERE bridge.post.id = ?`
     const post = await executeQuery<RowDataPacket[]>(sql, [id!])
     const transformedPost = dateFormatting(post)
