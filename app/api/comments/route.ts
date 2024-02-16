@@ -1,6 +1,5 @@
 import executeQuery from 'app/_lib/db'
 import { ResultSetHeader, RowDataPacket } from 'mysql2'
-import { redirect } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -29,7 +28,6 @@ export async function GET(request: NextRequest) {
             parent.id;
     `
     const comments = await executeQuery<RowDataPacket[]>(sql, [id])
-    // console.log(comments)
     return NextResponse.json(comments)
 }
 
