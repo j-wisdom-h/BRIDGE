@@ -16,11 +16,10 @@ async function getPost(postId: number) {
     const post = await res.json()
     return post[0]
 }
-
-async function getMyPost() {
+async function getMyPosts() {
     const email = await getUserMail()
     const res = await fetch(
-        `http://localhost:3000/api/mypage/myposts?email=${email}`,
+        `${process.env.NEXTAUTH_URL}/api/mypage/myposts?email=${email}`,
     )
     const posts = await res.json()
     return posts
@@ -43,4 +42,4 @@ async function deletePost(postId: number) {
     redirect('/')
 }
 
-export { deletePost, getAllPosts, getMyPost, getPost }
+export { deletePost, getAllPosts, getMyPosts, getPost }

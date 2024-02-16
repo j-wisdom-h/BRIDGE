@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { getMyPost } from '@/_lib/post'
+import { getMyPosts } from '@/_lib/post'
 
 export default async function mypost() {
-    const myposts = await getMyPost()
+    const myposts = await getMyPosts()
 
     return (
         <div>
