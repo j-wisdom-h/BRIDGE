@@ -1,9 +1,5 @@
 import executeQuery from 'app/_lib/db'
 import { ResultSetHeader, RowDataPacket } from 'mysql2'
-<<<<<<< HEAD
-=======
-import { redirect } from 'next/navigation'
->>>>>>> f1ba04da44415621456dabf7fb1f41d1f60aa3de
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
