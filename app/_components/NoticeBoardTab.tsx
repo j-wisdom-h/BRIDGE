@@ -1,3 +1,3 @@
 export default function NoticeBoardTab() {
-    return <div>NoticeBoardTab</div>
+    return <div className="card bg-base-100 shadow-xl h-52">NoticeBoardTab</div>
 }

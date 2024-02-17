@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { getMyPosts } from '@/_lib/post'
 interface Post {
@@ -11,7 +11,8 @@ interface Post {
 
 export default function MyStudy() {
     const [myposts, setMyposts] = useState<Post[]>([])
-    const [selectedPost, setSelectedPost] = useState('')
+    const [selectedPost, setSelectedPost] = useState<number>()
+    const selectedPostTitleRef = useRef('')
 
     useEffect(() => {
         async function fetchPosts() {
@@ -25,8 +26,11 @@ export default function MyStudy() {
         fetchPosts()
     }, [])
 
+    // 핸들러: 포스트 선택시 실행
     const handlePostChange = (event) => {
         setSelectedPost(event.target.value)
+        selectedPostTitleRef.current =
+            event.target.options[event.target.selectedIndex].text
     }
 
     return (
@@ -39,13 +43,20 @@ export default function MyStudy() {
                 >
                     <option value="">===게시글 목록===</option>
                     {myposts.map((post) => (
-                        <option key={post.id} value={post.title}>
+                        <option key={post.id} value={post.id}>
                             {post.title}
                         </option>
                     ))}
                 </select>
             )}
-            <Link href={`mystudy/${selectedPost}`}>스터디로 이동하기</Link>
+            <Link
+                href={{
+                    pathname: `mystudy/${selectedPostTitleRef.current}`,
+                    query: { postId: selectedPost },
+                }}
+            >
+                스터디로 이동하기
+            </Link>
         </div>
     )
 }

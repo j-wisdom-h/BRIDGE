@@ -19,10 +19,18 @@ async function getPost(postId: number) {
 async function getMyPosts() {
     const email = await getUserMail()
     const res = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/mypage/myposts?email=${email}`,
+        `http://localhost:3000/api/mypage/myposts?email=${email}`,
     )
     const posts = await res.json()
     return posts
+}
+async function getMyPost(postId: number) {
+    const res = await fetch(
+        `http://localhost:3000/api/mypage/myposts/${postId}`,
+    )
+    const posts = await res.json()
+    console.log(posts)
+    return posts[0]
 }
 
 async function deletePost(postId: number) {
@@ -42,4 +50,4 @@ async function deletePost(postId: number) {
     redirect('/')
 }
 
-export { deletePost, getAllPosts, getMyPosts, getPost }
+export { deletePost, getAllPosts, getMyPost, getMyPosts, getPost }
