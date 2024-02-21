@@ -1,18 +1,44 @@
-async function getComments(postId: number): Promise<any[]> {
+import { getUserId } from 'utils/getUser'
+
+async function getComments(postId: number) {
     const res = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/comments?postId=${postId}`,
+        `http://localhost:3000/api/comments?postId=${postId}`,
     )
     const comments = await res.json()
     return comments
 }
 
-async function deleteComment(commentId: number) {
-    console.log(commentId)
+async function createComment(
+    postId: number,
+    parentId: number,
+    content: string,
+) {
+    const userId = await getUserId()
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postId, parentId, userId, content }),
+    }
+    try {
+        const res = await fetch(
+            `http://localhost:3000/api/comments`,
+            requestOptions,
+        )
+        await res.json()
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+async function deleteComment(postId: number, commentId: number) {
     const res = await fetch(`http://localhost:3000/api/comments/${commentId}`, {
         method: 'DELETE',
     })
-    const comments = await res.json()
-    console.log(comments)
+    try {
+        await res.json()
+    } catch (err) {
+        console.error(err)
+    }
 }
 
-export { deleteComment, getComments }
+export { createComment, deleteComment, getComments }

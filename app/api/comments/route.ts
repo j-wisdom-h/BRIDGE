@@ -31,6 +31,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(comments)
 }
 
+export async function POST(request: NextRequest) {
+    const body = await request.json()
+    const { postId, parentId, userId, content } = body
+
+    const values = [postId, parentId, userId, content]
+    const sql =
+        'INSERT INTO bridge.comment (post_id, parent_comment_id, author_id, content) VALUES (?, ?, ?, ?)'
+    try {
+        await executeQuery<ResultSetHeader>(sql, values)
+        return NextResponse.json('코멘트 생성완료')
+    } catch (error) {
+        console.error('Error creating comment:', error)
+    }
+}
+
 export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { content } = body
