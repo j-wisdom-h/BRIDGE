@@ -2,54 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-    font-family: 'Pretendard';
-    font-weight: normal;
-    font-display: swap;
-    src:
-        local('Pretendard Regular'),
-        url(../public/font/Pretendard-Regular.subset.woff2) format('woff2');
-}
-@font-face {
-    font-family: 'Pretendard';
-    font-weight: 600;
-    font-display: swap;
-    src:
-        local('Pretendard SemiBold'),
-        url(../public/font/Pretendard-SemiBold.subset.woff2) format('woff2');
-}
-@font-face {
-    font-family: 'Pretendard';
-    font-weight: 900;
-    font-display: swap;
-    src:
-        local('Pretendard Black'),
-        url(../public/font/Pretendard-Black.subset.woff2) format('woff2');
-}
-
 @layer base {
     html,
     body {
         padding: 0;
         margin: 0;
         font-family:
-            Pretendard Variable,
-            Pretendard,
             -apple-system,
             BlinkMacSystemFont,
-            'Apple SD Gothic Neo',
+            Segoe UI,
             Roboto,
-            'Noto Sans KR',
-            'Segoe UI',
-            'Malgun Gothic',
-            'Apple Color Emoji',
-            'Segoe UI Emoji',
-            'Segoe UI Symbol',
+            Oxygen,
+            Ubuntu,
+            Cantarell,
+            Fira Sans,
+            Droid Sans,
+            Helvetica Neue,
             sans-serif;
         line-height: 1.6;
         font-size: 18px;
-        height: 100%;
-        width: 100%;
     }
 
     * {
@@ -61,31 +32,8 @@
         text-decoration: none;
     }
 
-    img,
-    vedio {
+    img {
         max-width: 100%;
-        max-height: 100%;
         display: block;
-    }
-}
-
-@layer components {
-    .flexRBetween {
-        @apply flex flex-row justify-between;
-    }
-    .semiBoldWhiteTxt {
-        @apply text-white text-center w-16 text-sm font-semibold self-center;
-    }
-    .inputBorder {
-        @apply border border-solid border-gray-300 rounded-lg;
-    }
-    .orangeBtnL {
-        @apply bg-orange-500 text-white rounded-lg w-full text-sm p-1.5;
-    }
-    .orangeBtnS {
-        @apply bg-orange-500 text-white rounded-lg w-28 text-xs p-1.5;
-    }
-    .centerMiddle {
-        @apply flex flex-col justify-center items-center h-full;
     }
 }

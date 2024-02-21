@@ -2,9 +2,8 @@ import '../styles/globals.css'
 
 import { Metadata } from 'next'
 
-import Footer from '@/_components/Footer'
-import Header from '@/_components/Header'
-import Providers from '@/_components/Provider'
+import Footer from '@/_component/Footer'
+import Header from '@/_component/Header'
 
 export const metadata: Metadata = {
     title: 'Bridge',
@@ -18,23 +17,10 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            {/* <head>
-                <link
-                    rel="preload"
-                    href="font/Pretendard-Regular.subset.woff2"
-                    as="font"
-                    type="font/woff2"
-                    crossOrigin="anonymous"
-                />
-            </head> */}
             <body>
-                <div className="w-full h-full">
-                    <Providers>
-                        <Header />
-                        <main className="min-h-screen">{children}</main>
-                        <Footer />
-                    </Providers>
-                </div>
+                <Header></Header>
+                {children}
+                <Footer></Footer>
             </body>
         </html>
     )
