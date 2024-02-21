@@ -19,11 +19,19 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "@/_component/*": ["app/_component/*"]
+            "@/_components/*": ["app/_components/*"],
+            "@/_interfaces/*": ["app/_interfaces/*"],
+            "@/_lib/*": ["app/_lib/*"]
         },
         "allowImportingTsExtensions": true,
         "strictNullChecks": true
     },
-    "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
-    "exclude": ["node_modules"]
+    "include": [
+        "next-env.d.ts",
+        "types/next-auth.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts"
+    ],
+    "exclude": ["node_modules", ".next"]
 }
