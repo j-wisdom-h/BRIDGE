@@ -7,6 +7,7 @@ const access: PoolOptions = {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_DATABASE || '',
     port: 3306,
+    connectionLimit: 10,
 }
 
 // DB pool create
@@ -21,21 +22,19 @@ export default function executeQuery<T>(
         pool.getConnection((err: Error, conn: PoolConnection) => {
             if (err) {
                 console.error('Error connecting to db:', err.message)
-            } else {
-                conn.query(query, arrParams, (err, rows) => {
-                    conn.release()
-                    if (err) {
-                        console.error(
-                            'Error in executing the query:',
-                            err.message,
-                        )
-                        reject(err)
-                    } else {
-                        console.log('Query executed successfully')
-                        resolve(rows as T)
-                    }
-                })
+                reject(err)
+                return
             }
+            conn.query(query, arrParams, (err, rows) => {
+                conn.release()
+                if (err) {
+                    console.error('Error in executing the query:', err.message)
+                    reject(err)
+                    return
+                }
+                console.log('Query executed successfully')
+                resolve(rows as T)
+            })
         })
     })
 }

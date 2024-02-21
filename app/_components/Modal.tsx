@@ -5,7 +5,19 @@ import { useEffect, useState } from 'react'
 import { deleteComment } from '@/_lib/comment'
 import { deletePost } from '@/_lib/post'
 
-function Deletebutton({ postId, commentId, type }) {
+interface DeletebuttonProps {
+    postId: number
+    commentId?: number
+    type: string
+    onDelete?: () => void
+}
+
+function Deletebutton({
+    postId,
+    commentId,
+    type,
+    onDelete,
+}: DeletebuttonProps) {
     const [kind, setKind] = useState('')
     const [modalId, setModalId] = useState('')
 
@@ -21,6 +33,19 @@ function Deletebutton({ postId, commentId, type }) {
         return type === 'post'
     }
 
+    function handleDelete(type) {
+        if (type === 'post') {
+            deletePost(postId)
+            return
+        }
+        if (commentId !== undefined) {
+            deleteComment(postId, commentId).then(() => {
+                if (onDelete) {
+                    onDelete()
+                }
+            })
+        }
+    }
     useEffect(() => {
         setKind(isPost() ? '게시글' : '댓글')
         setModalId(isPost() ? 'postModal' : 'commentModal')
@@ -41,11 +66,7 @@ function Deletebutton({ postId, commentId, type }) {
                         <form method="dialog">
                             <button
                                 className="btn mr-2"
-                                onClick={() =>
-                                    type === 'post'
-                                        ? deletePost(postId)
-                                        : deleteComment(commentId)
-                                }
+                                onClick={() => handleDelete(type)}
                             >
                                 확인
                             </button>

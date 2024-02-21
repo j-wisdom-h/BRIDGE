@@ -2,12 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { getAllPosts } from './_lib/post'
+
 export const dynamic = 'force-dynamic'
-
-import Image from 'next/image'
-import Link from 'next/link'
-
-import { getAllPosts } from './_lib/post'
 
 export default async function Home() {
     const posts = await getAllPosts()

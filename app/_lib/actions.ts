@@ -58,20 +58,4 @@ async function updatePost(postId, formdata: FormData) {
     redirect(`/read/${postId}`)
 }
 
-async function createComment(postId, parentId, formdata: FormData) {
-    const content = formdata.get('content')
-    const userId = await getUserId()
-    const sql =
-        'INSERT INTO bridge.comment (post_id, parent_comment_id, author_id, content) VALUES (?, ?, ?, ?)'
-    // console.log('postId', postId, 'parentId', parentId, 'userId', userId)
-    const values = [postId, parentId, userId, content]
-
-    try {
-        await executeQuery<ResultSetHeader>(sql, [...values])
-    } catch (err) {
-        throw new Error('댓글 게시 실패')
-    }
-    redirect(`/read/${postId}`)
-}
-
-export { createComment, createPost, updatePost }
+export { createPost, updatePost }

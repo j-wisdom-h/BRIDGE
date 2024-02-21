@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { getUserMail } from 'utils/getUser'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -14,7 +15,7 @@ const mlVariant = {
     3: 'ml-15',
 }
 
-export default function Comment({ depth, comment, comments, postId }) {
+function Comment({ depth, comment, comments, postId, handleComment }) {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [email, setEmail] = useState<string | null>(null)
     const [content, setContent] = useState(comment.content)
@@ -30,13 +31,13 @@ export default function Comment({ depth, comment, comments, postId }) {
 
     useEffect(() => {
         setIsAuthor(email !== null && email === comment?.author_email)
-    }, [email])
+    }, [comment?.author_email, email])
 
-    const toggleEditing = () => {
-        setIsEditing(!isEditing)
-    }
+    const toggleEditing = useCallback(() => {
+        setIsEditing((prevShowForm) => !prevShowForm)
+    }, [])
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         const updateContent = textAreaRef?.current?.value
         try {
             await fetch(
@@ -56,7 +57,7 @@ export default function Comment({ depth, comment, comments, postId }) {
         }
         setIsEditing(false)
         setContent(updateContent)
-    }
+    }, [comment.id])
 
     return (
         <div className={mlVariant[depth]}>
@@ -92,14 +93,16 @@ export default function Comment({ depth, comment, comments, postId }) {
                                 postId={postId}
                                 commentId={comment.id}
                                 type="comment"
+                                onDelete={handleComment}
                             />
                         </li>
                     </ul>
                 )}
                 <CommentForm
                     postId={postId}
-                    parentId={comment.parent_comment_id}
+                    parentId={comment.id}
                     type="reply"
+                    onCreate={handleComment}
                 />
             </div>
 
@@ -116,9 +119,11 @@ export default function Comment({ depth, comment, comments, postId }) {
                                     comment={child}
                                     comments={comments}
                                     postId={postId}
+                                    handleComment={handleComment}
                                 />
                             )),
                     )}
         </div>
     )
 }
+export default memo(Comment)
