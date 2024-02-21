@@ -1,19 +1,14 @@
 import Image from 'next/image'
-import Link from 'next/link'
-import { getUserMail } from 'utils/getUser'
-import { v4 as uuidv4 } from 'uuid'
 
-import Comment from '@/_components/Comment'
-import CommentForm from '@/_components/CommentForm'
-import { Deletebutton } from '@/_components/Modal'
-import { getComments } from '@/_lib/comment'
+import CommentBoard from '@/_components/CommentBoard'
+import SubButton from '@/_components/SubButton'
 import { getPost } from '@/_lib/post'
+
+export const dynamic = 'force-dynamic'
 
 export default async function Read({ params }: { params: { id: number } }) {
     const postId = params.id
     const post = await getPost(postId)
-    const comments = await getComments(postId)
-    const email = await getUserMail()
 
     return (
         <>
@@ -51,43 +46,9 @@ export default async function Read({ params }: { params: { id: number } }) {
                             alt="avatar"
                         />
                     </div>
-                    {post.email === email && (
-                        <div className="grow flex justify-end items-end">
-                            <Link
-                                href={`/post/${params.id}`}
-                                className="btn btn-warning first:mr-2"
-                            >
-                                수정하기
-                            </Link>
-                            <Deletebutton
-                                postId={params.id}
-                                commentId={null}
-                                type="post"
-                            />
-                        </div>
-                    )}
+                    <SubButton postId={params.id} author={post.email} />
                 </div>
-                <div className="my-8">
-                    <h3>댓글창</h3>
-                    {comments.length === 0 ? (
-                        <p className="py-2">작성된 댓글이 없습니다.</p>
-                    ) : (
-                        comments
-                            .filter(
-                                (comment) => comment.parent_comment_id === null,
-                            )
-                            .map((comment) => (
-                                <Comment
-                                    key={uuidv4()}
-                                    comment={comment}
-                                    depth={0}
-                                    comments={comments}
-                                    postId={postId}
-                                />
-                            ))
-                    )}
-                </div>
-                <CommentForm postId={postId} parentId={null} type="comment" />
+                <CommentBoard postId={postId} />
             </div>
         </>
     )
