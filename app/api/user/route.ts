@@ -1,5 +1,6 @@
 import executeQuery from 'app/_lib/db'
 import bcrypt from 'bcrypt'
+import { ResultSetHeader } from 'mysql2'
 import { NextResponse } from 'next/server'
 import { findUserByEmail } from 'utils/userQueries'
 
@@ -21,7 +22,7 @@ export async function signUpUser(user: User) {
             return { success: false, message: 'Email is already registered' }
         }
 
-        const result = await executeQuery(sql, values)
+        const result = await executeQuery<ResultSetHeader>(sql, values)
         console.log('User registered:', result)
         return { success: true, message: 'User registered successfully' }
     } catch (error) {

@@ -48,32 +48,22 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user, account, profile }) {
             if (profile && account) {
-                // 프로필 정보 설정
-                //console.log(profile)
-                const { name, email, picture, ...others } = profile
-                token = {
-                    name,
-                    email,
-                    image: picture,
-                    accessToken: account.access_token,
-                    accessTokenExpires: account.expires_at,
-                    refreshToken: account.refresh_token,
-                }
-            } else if (user) {
-                // token.accessToken = { 사용자액세스토큰 }
-                token.email = user.email
+                token.accessToken = account.access_token
             }
-
-            return token
+            return { ...token, ...user }
         },
         async session({ session, token }) {
-            session.user = token as any
-            //console.log('sesson', session)
+            session.user = {
+                ...session.user,
+                id: token.sub,
+                accessToken: token.accessToken,
+            } as any
             return session
         },
     },
     session: {
         strategy: 'jwt',
+        maxAge: 60 * 60,
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
