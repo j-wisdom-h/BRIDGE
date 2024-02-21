@@ -34,7 +34,7 @@ export default function MyStudy() {
     }
 
     return (
-        <div className="flex justify-center items-center mt-24">
+        <div className="flex">
             {myposts && (
                 <select
                     className="select select-bordered w-full max-w-xs"
@@ -55,7 +55,7 @@ export default function MyStudy() {
                     query: { postId: selectedPost },
                 }}
             >
-                <button className="btn btn-warning">스터디 이동하기</button>
+                스터디로 이동하기
             </Link>
         </div>
     )
