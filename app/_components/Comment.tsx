@@ -15,7 +15,7 @@ const mlVariant = {
     3: 'ml-15',
 }
 
-function Comment({ depth, comment, comments, postId, handleComment }) {
+function Comment({ depth, comment, comments, postId, author, handleComment }) {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [email, setEmail] = useState<string | null>(null)
     const [content, setContent] = useState(comment.content)
@@ -57,7 +57,33 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
         }
         setIsEditing(false)
         setContent(updateContent)
-    }, [comment.id])
+    }, [])
+
+    async function inviteMember() {
+        try {
+            const res = await fetch(
+                `http://localhost:3000/api/mypage/mystudy/invite`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        post_id: postId,
+                        inviting_member_email: email,
+                        invited_member_email: comment?.author_email,
+                        status: 'pending',
+                    }),
+                },
+            )
+            if (res.status === 200) {
+                const result = await res.json()
+                alert(result.message)
+            }
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     return (
         <div className={mlVariant[depth]}>
@@ -68,6 +94,16 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
                     <p>{content}</p>
                 )}
                 <p>{comment?.author_email}</p>
+                {email &&
+                    email === author &&
+                    author !== comment?.author_email && (
+                        <button
+                            className="btn btn-outline btn-warning"
+                            onClick={inviteMember}
+                        >
+                            초대하기
+                        </button>
+                    )}
                 <p>{comment?.author_avatar}</p>
                 {isAuthor && (
                     <ul className="flex">
@@ -119,6 +155,7 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
                                     comment={child}
                                     comments={comments}
                                     postId={postId}
+                                    author={author}
                                     handleComment={handleComment}
                                 />
                             )),

@@ -15,7 +15,7 @@ interface IComment {
     content: string
 }
 
-export default function CommentBord({ postId }) {
+export default function CommentBord({ author, postId }) {
     const [comments, setComments] = useState<IComment[]>([])
 
     useEffect(() => {
@@ -47,6 +47,7 @@ export default function CommentBord({ postId }) {
                                 depth={0}
                                 comments={comments}
                                 postId={postId}
+                                author={author}
                                 handleComment={handleComment}
                             />
                         ))

@@ -48,7 +48,7 @@ export default async function Read({ params }: { params: { id: number } }) {
                     </div>
                     <SubButton postId={params.id} author={post.email} />
                 </div>
-                <CommentBoard postId={postId} />
+                <CommentBoard author={post.email} postId={postId} />
             </div>
         </>
     )
