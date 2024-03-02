@@ -2,31 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const colorOptions: { [key: number]: string } = {
-    0: 'bg-[#f7f37b]', // lightened lemon yellow
-    1: 'bg-[#f5e591]', // lightened tangerine
-    2: 'bg-[#87e7bb]', // lightened mint green
-    3: 'bg-[#8de3f6]', // lightened sky blue
-    4: 'bg-[#f2a990]', // lightened coral pink
-    5: 'bg-[#f09783]', // lightened salmon pink
-}
-const colorTagStyles = (index: number) => {
-    const colors = Object.values(colorOptions)
-    const calculatedColorIndex = index % colors.length
-    const tagColor = colorOptions[calculatedColorIndex]
-    return `flex flex-row justify-between shrink-0 basis-16 rounded-md ${tagColor} px-1.5 my-0.5 mr-1`
-}
-interface IColoredTagItem {
-    index: number
-    tagItem: string
-    deleteTagItem: (e: React.MouseEvent<HTMLButtonElement>) => void
-}
+import SearchKeyword from './SearchKeyword'
 
 function SearchBar() {
     const modalRef = useRef<HTMLDivElement>(null)
     const [isOpenModal, setIsModalOpen] = useState<boolean>(false)
-    const [tagItem, setTagItem] = useState<string>('')
-    const [tagList, setTagList] = useState<string[]>([])
 
     function handleModal() {
         setIsModalOpen(!isOpenModal)
@@ -43,26 +23,6 @@ function SearchBar() {
         [isOpenModal, modalRef],
     )
 
-    const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.currentTarget.value.length !== 0 && e.key === 'Enter') {
-            submitTagItem()
-        }
-    }
-
-    const submitTagItem = () => {
-        setTagList([...tagList, tagItem])
-        setTagItem('')
-    }
-
-    const deleteTagItem = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const tagToRemove = e.currentTarget.value
-        const filteredTagList = tagList.filter(
-            (tagItem) => tagItem !== tagToRemove,
-        )
-        console.log(filteredTagList)
-        setTagList(filteredTagList)
-    }
-
     useEffect(() => {
         window.addEventListener('mousedown', handleModalClick)
         return () => window.removeEventListener('mousedown', handleModalClick)
@@ -75,12 +35,9 @@ function SearchBar() {
 
     const modalStyles = `
         flex flex-col grow absolute z-10 mt-2 p-5 rounded-lg mx-[5%] w-[90%]
-        shadow-md bg-white text-black bg-orange-200
+        shadow-md bg-white text-black border-4 border-orange-500
     `
 
-    const tagInputStyles = `
-        flex-1 rounded-lg p-1 text-black focus:outline-gray-200
-    `
     return (
         <div ref={modalRef}>
             <div className="relative" onClick={handleModal}>
@@ -108,36 +65,13 @@ function SearchBar() {
             </div>
             {isOpenModal && (
                 <div className={modalStyles}>
-                    <input
-                        type="text"
-                        placeholder="Press enter to add tags"
-                        className={tagInputStyles}
-                        tabIndex={2}
-                        onChange={(e) => setTagItem(e.target.value)}
-                        value={tagItem}
-                        onKeyDown={onKeyPress}
-                    />
-                    <div className="grow basis-14">
-                        <ul className="flex flex-wrap mt-2">
-                            <span className="mr-2 align-middle">
-                                검색키워드
-                            </span>
-                            {tagList.map((tagItem, index) => (
-                                <ColoredTagItem
-                                    key={index}
-                                    index={index}
-                                    tagItem={tagItem}
-                                    deleteTagItem={deleteTagItem}
-                                />
-                            ))}
-                        </ul>
-                    </div>
+                    <SearchKeyword />
                     <div className="flex flex-row grow">
-                        <div className="flex-1 mr-2 min-h-10 bg-white rounded-lg">
-                            시간
+                        <div className="flex-1 mr-2 min-h-10 rounded-lg">
+                            <p className="bg-orange-400 text-white">시간</p>
                         </div>
-                        <div className="flex-1 min-h-10 bg-white rounded-lg">
-                            장소
+                        <div className="flex-1 min-h-1 rounded-lg ">
+                            <p className="bg-orange-400 text-white">장소</p>
                         </div>
                     </div>
                     <input
@@ -148,21 +82,6 @@ function SearchBar() {
                 </div>
             )}
         </div>
-    )
-}
-
-export function ColoredTagItem({
-    tagItem,
-    index,
-    deleteTagItem,
-}: IColoredTagItem) {
-    return (
-        <li key={index} className={colorTagStyles(index)}>
-            <p className="whitespace-nowrap">{tagItem}</p>
-            <button onClick={deleteTagItem} value={tagItem}>
-                x
-            </button>
-        </li>
     )
 }
 
