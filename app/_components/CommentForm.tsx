@@ -1,26 +1,33 @@
 'use client'
 import { useSession } from 'next-auth/react'
-import { useState } from 'react'
+import React, { memo, useCallback, useState } from 'react'
 
-import { createComment } from '@/_lib/actions'
+import { createComment } from '@/_lib/comment'
 
-export default function CommentForm({ postId, parentId, type }) {
-    const crateCommentwithId = createComment.bind(null, postId, parentId)
-
-    const [showForm, setShowForm] = useState<boolean>(
-        type === 'comment' ? true : false,
-    )
+function CommentForm({ postId, parentId, type, onCreate }) {
     const { data: session } = useSession()
+    const [showForm, setShowForm] = useState<boolean>(type === 'comment')
 
-    const toggleForm = () => {
-        setShowForm(!showForm)
+    const toggleForm = useCallback(() => {
+        setShowForm((prevShowForm) => !prevShowForm)
+    }, [])
+
+    const handleCreateComment = async (event) => {
+        event.preventDefault()
+        const content = event.target.elements.content.value
+        try {
+            await createComment(postId, parentId, content)
+            onCreate()
+        } catch (error) {
+            console.error('Error creating comment:', error)
+        }
     }
 
     return (
         <>
-            {parentId && session && <p onClick={toggleForm}>답글쓰기</p>}
+            {session && <p onClick={toggleForm}>답글쓰기</p>}
             <form
-                action={crateCommentwithId}
+                onSubmit={handleCreateComment}
                 className={showForm ? 'block' : 'hidden'}
             >
                 <textarea
@@ -32,6 +39,7 @@ export default function CommentForm({ postId, parentId, type }) {
                 <button
                     className="btn btn-outline btn-warning"
                     disabled={!session}
+                    type="submit"
                 >
                     댓글작성
                 </button>
@@ -39,3 +47,4 @@ export default function CommentForm({ postId, parentId, type }) {
         </>
     )
 }
+export default memo(CommentForm)

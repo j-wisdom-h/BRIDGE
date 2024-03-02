@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { getUserMail } from 'utils/getUser'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -14,7 +15,7 @@ const mlVariant = {
     3: 'ml-15',
 }
 
-export default function Comment({ depth, comment, comments, postId }) {
+function Comment({ depth, comment, comments, postId, author, handleComment }) {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [email, setEmail] = useState<string | null>(null)
     const [content, setContent] = useState(comment.content)
@@ -30,13 +31,13 @@ export default function Comment({ depth, comment, comments, postId }) {
 
     useEffect(() => {
         setIsAuthor(email !== null && email === comment?.author_email)
-    }, [email])
+    }, [comment?.author_email, email])
 
-    const toggleEditing = () => {
-        setIsEditing(!isEditing)
-    }
+    const toggleEditing = useCallback(() => {
+        setIsEditing((prevShowForm) => !prevShowForm)
+    }, [])
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         const updateContent = textAreaRef?.current?.value
         try {
             await fetch(
@@ -56,6 +57,32 @@ export default function Comment({ depth, comment, comments, postId }) {
         }
         setIsEditing(false)
         setContent(updateContent)
+    }, [])
+
+    async function inviteMember() {
+        try {
+            const res = await fetch(
+                `http://localhost:3000/api/mypage/mystudy/invite`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        post_id: postId,
+                        inviting_member_email: email,
+                        invited_member_email: comment?.author_email,
+                        status: 'pending',
+                    }),
+                },
+            )
+            if (res.status === 200) {
+                const result = await res.json()
+                alert(result.message)
+            }
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     return (
@@ -67,6 +94,16 @@ export default function Comment({ depth, comment, comments, postId }) {
                     <p>{content}</p>
                 )}
                 <p>{comment?.author_email}</p>
+                {email &&
+                    email === author &&
+                    author !== comment?.author_email && (
+                        <button
+                            className="btn btn-outline btn-warning"
+                            onClick={inviteMember}
+                        >
+                            초대하기
+                        </button>
+                    )}
                 <p>{comment?.author_avatar}</p>
                 {isAuthor && (
                     <ul className="flex">
@@ -92,14 +129,16 @@ export default function Comment({ depth, comment, comments, postId }) {
                                 postId={postId}
                                 commentId={comment.id}
                                 type="comment"
+                                onDelete={handleComment}
                             />
                         </li>
                     </ul>
                 )}
                 <CommentForm
                     postId={postId}
-                    parentId={comment.parent_comment_id}
+                    parentId={comment.id}
                     type="reply"
+                    onCreate={handleComment}
                 />
             </div>
 
@@ -116,9 +155,12 @@ export default function Comment({ depth, comment, comments, postId }) {
                                     comment={child}
                                     comments={comments}
                                     postId={postId}
+                                    author={author}
+                                    handleComment={handleComment}
                                 />
                             )),
                     )}
         </div>
     )
 }
+export default memo(Comment)
