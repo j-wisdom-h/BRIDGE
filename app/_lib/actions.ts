@@ -19,9 +19,11 @@ async function formDateValues(formdata: FormData) {
         'atTime',
         'duration',
         'endDate',
+        'tagList',
     ]
     const values = desiredKeyOrder.map((key) => {
         const value = formdata.get(key)
+
         if (typeof value === 'string') {
             return isNaN(Number(value)) ? value : parseInt(value, 10)
         }
@@ -34,7 +36,7 @@ async function formDateValues(formdata: FormData) {
 async function createPost(formdata: FormData) {
     const values = await formDateValues(formdata)
     const sql =
-        'INSERT INTO bridge.post (title, content, num, location, startDate, atTime, duration, endDate, author_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        'INSERT INTO bridge.post (title, content, num, location, startDate, atTime, duration, endDate, keywords, author_id) VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?)'
     let postId: number | null = null
     let studyId, memberId
 
@@ -96,8 +98,9 @@ async function createPost(formdata: FormData) {
 async function updatePost(postId, formdata: FormData) {
     const values = await formDateValues(formdata)
     values[values.length - 1] = postId
+
     const sql =
-        'UPDATE bridge.post SET title = ?, content = ?, num = ?, location = ?, startDate = ?, atTime = ?, duration = ?, endDate = ? WHERE id = ?'
+        'UPDATE bridge.post SET title = ?, content = ?, num = ?, location = ?, startDate = ?, atTime = ?, duration = ?, endDate = ?, keywords = ? WHERE id = ?'
     try {
         await executeQuery<ResultSetHeader>(sql, [...values])
     } catch (err) {
