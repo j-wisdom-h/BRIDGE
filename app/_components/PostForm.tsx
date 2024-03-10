@@ -1,5 +1,8 @@
+'use server'
 import { createPost, updatePost } from '@/_lib/actions'
 import { getPost } from '@/_lib/post'
+
+import { PostKeyword } from './FilterTab'
 
 export default async function PostForm({ postId }) {
     //  생성하기  === id = false, 수정하기  ===  id = true
@@ -27,7 +30,6 @@ export default async function PostForm({ postId }) {
                             defaultValue={update ? post.title : ''}
                         />
                     </div>
-
                     <div className="flex items-center mb-4">
                         <label className="w-8 min-w-[90px] mr-2">내용</label>
                         <textarea
@@ -38,8 +40,11 @@ export default async function PostForm({ postId }) {
                             minLength={10}
                             maxLength={200}
                             defaultValue={update ? post.content : ''}
-                        ></textarea>
+                        />
                     </div>
+                    <PostKeyword
+                        initKeyword={update ? JSON.parse(post.keywords) : []}
+                    />
                     <div className="flex items-center mb-4">
                         <label className="w-8 min-w-[90px] mr-2">인원</label>
                         <input
@@ -98,7 +103,6 @@ export default async function PostForm({ postId }) {
                             defaultValue={update ? post.duration : ''}
                         />
                     </div>
-
                     <input
                         type="submit"
                         value={update ? '수정하기' : '게시하기'}
