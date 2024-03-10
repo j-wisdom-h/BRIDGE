@@ -28,7 +28,7 @@ export default function RootLayout({
                 />
             </head> */}
             <body>
-                <div className="w-full h-full">
+                <div>
                     <Providers>
                         <Header />
                         <main className="min-h-screen">{children}</main>

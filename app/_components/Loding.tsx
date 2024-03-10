@@ -1,8 +1,9 @@
-export default function Loading() {
-    // You can add any UI inside Loading, including a Skeleton.
+function Loading() {
     return (
         <div className="centerMiddle">
             <span className="loading loading-dots loading-lg" />
         </div>
     )
 }
+
+export default Loading
