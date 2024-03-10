@@ -17,7 +17,7 @@
                 "name": "next"
             }
         ],
-        "baseUrl": ".",
+        "baseUrl": "./",
         "paths": {
             "@/_components/*": ["app/_components/*"],
             "@/_interfaces/*": ["app/_interfaces/*"],
@@ -31,7 +31,8 @@
         "types/next-auth.d.ts",
         "**/*.ts",
         "**/*.tsx",
-        ".next/types/**/*.ts"
+        ".next/types/**/*.ts",
+        "__tests__/*.test.tsx"
     ],
     "exclude": ["node_modules", ".next"]
 }

@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
 // 로그인 해야 접근 가능 경로
-const withAuthList = ['profile', 'mypost', 'mystudy', 'post']
+const withAuthList = ['profile', 'mypost', 'mystudy', 'post', 'alarm']
 // 로그인 하지 않은 상태에서 접근가능 경로
 const withOutAuthList = ['signin', 'signup']
 
