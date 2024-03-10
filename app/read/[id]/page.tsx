@@ -2,6 +2,7 @@ import Image from 'next/image'
 
 import CommentBoard from '@/_components/CommentBoard'
 import SubButton from '@/_components/SubButton'
+import { getTagColor } from '@/_lib/colortag'
 import { getPost } from '@/_lib/post'
 
 export const dynamic = 'force-dynamic'
@@ -18,7 +19,23 @@ export default async function Read({ params }: { params: { id: number } }) {
                 </h3>
                 <div className="card min-h-[75%] p-8 bg-base-100 border border-gray-300 shadow-lg text-xs">
                     <div className="h-8 min-h-[10rem]">{post.content}</div>
-                    <div className="h-8">키워드</div>
+                    <div className="h-8">
+                        키워드
+                        <div className="inline">
+                            {JSON.parse(post.keywords).map((keyword, index) => {
+                                return (
+                                    <span
+                                        key={keyword}
+                                        className={`${getTagColor(
+                                            index,
+                                        )} p-1 rounded-xl`}
+                                    >
+                                        {keyword}
+                                    </span>
+                                )
+                            })}
+                        </div>
+                    </div>
                     <div className="h-8">모집인원 : {post.num}</div>
                     <div className="h-8">
                         모집기간 : {post.startDate} ~ {post.endDate}
@@ -48,7 +65,7 @@ export default async function Read({ params }: { params: { id: number } }) {
                     </div>
                     <SubButton postId={params.id} author={post.email} />
                 </div>
-                <CommentBoard postId={postId} />
+                <CommentBoard author={post.email} postId={postId} />
             </div>
         </>
     )

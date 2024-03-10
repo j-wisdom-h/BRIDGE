@@ -85,6 +85,9 @@
     .orangeBtnS {
         @apply bg-orange-500 text-white rounded-lg w-28 text-xs p-1.5;
     }
+    .orangeBtnS {
+        @apply bg-orange text-white rounded-lg w-28 text-sm p-1.5;
+    }
     .centerMiddle {
         @apply flex flex-col justify-center items-center h-full;
     }

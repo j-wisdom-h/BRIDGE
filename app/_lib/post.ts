@@ -2,9 +2,7 @@ import { redirect } from 'next/navigation'
 import { getAccessToken, getUserMail } from 'utils/getUser'
 
 async function getAllPosts() {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
-        cache: 'no-store',
-    })
+    const res = await fetch(`http://localhost:3000/api/posts`)
     const posts = await res.json()
     return posts
 }
@@ -50,4 +48,20 @@ async function deletePost(postId: number) {
     redirect('/')
 }
 
-export { deletePost, getAllPosts, getMyPost, getMyPosts, getPost }
+async function searchPost(tagList: string[], location?: string, time?: string) {
+    const url = new URL(`http://localhost:3000/api/search`)
+    if (tagList.length > 0) {
+        url.searchParams.set('keyword', JSON.stringify(tagList))
+    }
+    if (location && location !== '') {
+        url.searchParams.set('location', location)
+    }
+    if (time && time !== '') {
+        url.searchParams.set('time', time)
+    }
+    const res = await fetch(url.toString())
+    const result = await res.json()
+    return result
+}
+
+export { deletePost, getAllPosts, getMyPost, getMyPosts, getPost, searchPost }

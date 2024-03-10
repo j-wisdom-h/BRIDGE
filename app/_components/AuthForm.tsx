@@ -3,6 +3,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { logInschema, signUpschema } from 'hooks/validationYup'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import googleLogin from 'public/image/google.png'
 import { useRef, useState } from 'react'
@@ -114,24 +115,23 @@ function SignUpForm() {
         resolver: yupResolver(signUpschema),
     })
 
-    // 이메일 전송 확인하는 상태
-    const [sendSucess, setSendSucess] = useState(false)
+    const router = useRouter()
 
     // 이메일 인증번호 확인하는 상태
-    const [verifySucess, setVerifySucess] = useState(false)
+    const [verifySucess, setVerifySucess] = useState<boolean>(false)
+    // 이메일 전송 확인 상태
+    const [showVerifyInput, setShowVerifyInput] = useState<boolean>(false)
 
     const emailRef = watch('email')
     const verifyCodeRef = useRef<HTMLInputElement | null>(null)
-    const [showVerifyInput, setShowVerifyInput] = useState(false)
 
     const onSubmit: SubmitHandler<User> = async (data: IsignUp) => {
         const { confirmPassword, ...others } = data
 
-        if (verifySucess) {
+        if (!verifySucess) {
             alert('이메일인증을 해주세요')
             return
         }
-        //console.log(data)
         try {
             const res = await fetch(`http://localhost:3000/api/user`, {
                 method: 'POST',
@@ -142,15 +142,16 @@ function SignUpForm() {
                     ...others,
                 }),
             })
-            const body = await res.json()
-            console.log(body)
+            await res.json()
+            router.push('/signin')
         } catch (error) {
             console.error('회원가입 에러:', error)
         }
     }
-
+    // 인증번호 전송
     const handleVerification = async () => {
         const email = emailRef
+
         const regExp =
             /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
 
@@ -173,7 +174,7 @@ function SignUpForm() {
             console.error('인증하기 함수 에러:', error)
         }
     }
-
+    // 인증번호 인증완료
     const handleverifyCode = async () => {
         const email = emailRef
         const verifyCode = verifyCodeRef.current?.value
@@ -191,7 +192,7 @@ function SignUpForm() {
             )
             if (res.status == 200) {
                 alert('인증완료')
-                setSendSucess(true)
+                setVerifySucess(true)
             }
         } catch (error) {
             console.error('인증하기 함수 에러:', error)
@@ -237,7 +238,7 @@ function SignUpForm() {
                         {field.id === 'email' && (
                             <button
                                 type="button"
-                                className="absolute top-7 right-0 bg-orange text-white rounded-md w-16 text-xs h-8"
+                                className="absolute top-7 right-0 bg-orange-500 text-white rounded-md w-16 text-xs h-8"
                                 onClick={handleVerification}
                             >
                                 메일인증

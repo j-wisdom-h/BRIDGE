@@ -1,24 +1,16 @@
-import { NextResponse } from 'next/server'
+import bcrypt from 'bcrypt'
+import { cookies } from 'next/headers'
+import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
-// 사용자의 인증 코드를 저장하는 맵 객체
-export const verificationCodes = new Map()
-
-// 이메일 인증 함수
-export function verifyCode(email, userCode) {
-    const storedCode = verificationCodes.get(email)
-    console.log(typeof storedCode, typeof userCode)
-
-    if (storedCode === Number(userCode)) {
-        // 인증 성공
-        return true
-    } else {
-        // 인증 실패
-        return false
-    }
+export async function verifyCode(email: string, userCode: string) {
+    'use server'
+    const cookieStore = cookies()
+    const storedCode = cookieStore.get(email)?.value
+    const IsSame = await bcrypt.compare(userCode, storedCode)
+    return IsSame
 }
-
-export async function POST(req) {
+export async function POST(req: NextRequest) {
     const body = await req.json()
     const { email } = body
 
@@ -40,14 +32,16 @@ export async function POST(req) {
         subject: 'Bridge Verification Code',
         html: `<p>Your verification code is: ${verificationCode}</p>`,
     }
-    //console.log(mailOptions)
 
+    const hashedVerfiyNum = await bcrypt.hash(String(verificationCode), 10)
+    console.log('hashedVerfiyNum', hashedVerfiyNum)
     // 사용자의 이메일을 키로하여 인증 코드 저장
-    verificationCodes.set(email, verificationCode)
+    cookies().set(email, hashedVerfiyNum, { maxAge: 3 * 60 })
 
     try {
         await transporter.sendMail(mailOptions)
         console.log('Email sent!')
+
         return NextResponse.json({ success: true }, { status: 200 })
     } catch (error) {
         console.error('Error sending email:', error)

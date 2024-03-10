@@ -2,6 +2,8 @@
 
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import React from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { getUserMail } from 'utils/getUser'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -15,7 +17,7 @@ const mlVariant = {
     3: 'ml-15',
 }
 
-function Comment({ depth, comment, comments, postId, handleComment }) {
+function Comment({ depth, comment, comments, postId, author, handleComment }) {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [email, setEmail] = useState<string | null>(null)
     const [content, setContent] = useState(comment.content)
@@ -32,11 +34,16 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
     useEffect(() => {
         setIsAuthor(email !== null && email === comment?.author_email)
     }, [comment?.author_email, email])
+    }, [comment?.author_email, email])
 
     const toggleEditing = useCallback(() => {
         setIsEditing((prevShowForm) => !prevShowForm)
     }, [])
+    const toggleEditing = useCallback(() => {
+        setIsEditing((prevShowForm) => !prevShowForm)
+    }, [])
 
+    const handleSave = useCallback(async () => {
     const handleSave = useCallback(async () => {
         const updateContent = textAreaRef?.current?.value
         try {
@@ -57,7 +64,33 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
         }
         setIsEditing(false)
         setContent(updateContent)
-    }, [comment.id])
+    }, [])
+
+    async function inviteMember() {
+        try {
+            const res = await fetch(
+                `http://localhost:3000/api/mypage/mystudy/invite`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        post_id: postId,
+                        inviting_member_email: email,
+                        invited_member_email: comment?.author_email,
+                        status: 'pending',
+                    }),
+                },
+            )
+            if (res.status === 200) {
+                const result = await res.json()
+                alert(result.message)
+            }
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     return (
         <div className={mlVariant[depth]}>
@@ -68,6 +101,16 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
                     <p>{content}</p>
                 )}
                 <p>{comment?.author_email}</p>
+                {email &&
+                    email === author &&
+                    author !== comment?.author_email && (
+                        <button
+                            className="btn btn-outline btn-warning"
+                            onClick={inviteMember}
+                        >
+                            초대하기
+                        </button>
+                    )}
                 <p>{comment?.author_avatar}</p>
                 {isAuthor && (
                     <ul className="flex">
@@ -94,6 +137,7 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
                                 commentId={comment.id}
                                 type="comment"
                                 onDelete={handleComment}
+                                onDelete={handleComment}
                             />
                         </li>
                     </ul>
@@ -101,7 +145,9 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
                 <CommentForm
                     postId={postId}
                     parentId={comment.id}
+                    parentId={comment.id}
                     type="reply"
+                    onCreate={handleComment}
                     onCreate={handleComment}
                 />
             </div>
@@ -119,6 +165,7 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
                                     comment={child}
                                     comments={comments}
                                     postId={postId}
+                                    author={author}
                                     handleComment={handleComment}
                                 />
                             )),
@@ -126,4 +173,5 @@ function Comment({ depth, comment, comments, postId, handleComment }) {
         </div>
     )
 }
+export default memo(Comment)
 export default memo(Comment)
