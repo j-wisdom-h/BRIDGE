@@ -2,15 +2,9 @@
 
 import { useEffect, useState } from 'react'
 
+import { DeletebuttonProps } from '@/_interfaces/ButtonProps'
 import { deleteComment } from '@/_lib/comment'
 import { deletePost } from '@/_lib/post'
-
-interface DeletebuttonProps {
-    postId: number
-    commentId?: number
-    type: string
-    onDelete?: () => void
-}
 
 function Deletebutton({
     postId,

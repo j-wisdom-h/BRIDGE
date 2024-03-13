@@ -2,8 +2,6 @@
 
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import React from 'react'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
-import React from 'react'
 import { getUserMail } from 'utils/getUser'
 import { v4 as uuidv4 } from 'uuid'
 

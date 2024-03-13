@@ -4,12 +4,9 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useEffect, useRef, useState } from 'react'
 
+import { IstudyPost } from '@/_interfaces/IPost'
 import { getMyPosts } from '@/_lib/post'
-interface Post {
-    id: number
-    title: string
-    post_id?: number
-}
+
 async function getMystudy(userId) {
     const res = await fetch(
         `http://localhost:3000/api/mypage/mystudy?userId=${userId}`,
@@ -19,7 +16,7 @@ async function getMystudy(userId) {
     return result
 }
 export default function MyStudy() {
-    const [myposts, setMyposts] = useState<Post[]>([])
+    const [myposts, setMyposts] = useState<IstudyPost[]>([])
     const [selectedPost, setSelectedPost] = useState<number>()
     const selectedPostTitleRef = useRef('')
     const { data: session } = useSession()

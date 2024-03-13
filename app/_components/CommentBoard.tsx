@@ -2,18 +2,11 @@
 import { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
+import { IComment } from '@/_interfaces/IComment'
 import { getComments } from '@/_lib/comment'
 
 import Comment from './Comment'
 import CommentForm from './CommentForm'
-
-interface IComment {
-    id: number
-    post_id: number
-    parent_comment_id: number
-    author_id: number
-    content: string
-}
 
 export default function CommentBord({ author, postId }) {
     const [comments, setComments] = useState<IComment[]>([])

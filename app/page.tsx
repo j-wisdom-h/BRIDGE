@@ -2,13 +2,14 @@
 import { useEffect, useState } from 'react'
 
 import FilterTab from './_components/FilterTab'
-import Loading from './_components/Loding'
+import Loading from './_components/Loading'
 import Posts from './_components/Posts'
 import SearchBar from './_components/SearchBar'
+import { Ipost } from './_interfaces/IPost'
 import { getAllPosts, searchPost } from './_lib/post'
 
 export default function Home() {
-    const [posts, setPosts] = useState<string[]>([])
+    const [posts, setPosts] = useState<Ipost[] | null>(null)
     const [filters, setFilter] = useState<string[]>([])
 
     async function initPost() {
