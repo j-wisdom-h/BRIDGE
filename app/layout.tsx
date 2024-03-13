@@ -28,13 +28,11 @@ export default function RootLayout({
                 />
             </head> */}
             <body>
-                <div>
-                    <Providers>
-                        <Header />
-                        <main className="min-h-screen">{children}</main>
-                        <Footer />
-                    </Providers>
-                </div>
+                <Providers>
+                    <Header />
+                    <main className="h-full">{children}</main>
+                    <Footer />
+                </Providers>
             </body>
         </html>
     )

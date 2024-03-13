@@ -13,15 +13,15 @@ export default async function Read({ params }: { params: { id: number } }) {
 
     return (
         <>
-            <div className="w-[50%] h-full pt-28 mb-28">
+            <div className="w-[50%] h-full pt-28 mb-28 sm:w-[70%]">
                 <h3 className="font-semibold text-lg text-center mb-2">
                     {post.title}
                 </h3>
                 <div className="card min-h-[75%] p-8 bg-base-100 border border-gray-300 shadow-lg text-xs">
                     <div className="h-8 min-h-[10rem]">{post.content}</div>
-                    <div className="h-8">
-                        키워드
-                        <div className="inline">
+                    <div className="h-8 lg:flex sm:h-auto">
+                        <span className="mr-2">키워드</span>
+                        <div className="flex flex-wrap">
                             {JSON.parse(post.keywords).map((keyword, index) => {
                                 return (
                                     <span
