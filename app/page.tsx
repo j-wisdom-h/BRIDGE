@@ -1,61 +1,37 @@
-import Image from 'next/image'
-import Link from 'next/link'
+'use client'
+import { useEffect, useState } from 'react'
 
-import { getAllPosts } from './_lib/post'
-export const dynamic = 'force-dynamic'
+import FilterTab from './_components/FilterTab'
+import Loading from './_components/Loding'
+import Posts from './_components/Posts'
+import SearchBar from './_components/SearchBar'
+import { getAllPosts, searchPost } from './_lib/post'
 
-export default async function Home() {
-    const posts = await getAllPosts()
+export default function Home() {
+    const [posts, setPosts] = useState<string[]>([])
+    const [filters, setFilter] = useState<string[]>([])
+
+    async function initPost() {
+        const posts = await getAllPosts()
+        setPosts(posts)
+    }
+
+    useEffect(() => {
+        if (filters.length > 0) {
+            searchPost(filters).then((res) => setPosts(res))
+        } else {
+            initPost()
+        }
+    }, [filters])
 
     return (
-        <div className="grid grid-cols-4 gap-4 auto-rows-fr p-16">
-            {posts &&
-                posts.map((post) => {
-                    return (
-                        <li
-                            key={post.id}
-                            className="card bg-base-100 border border-gray-300 shadow-lg"
-                        >
-                            <Link
-                                href={`read/${post.id}`}
-                                className="card-body p-4"
-                            >
-                                <h3 className="card-title text-lg">
-                                    {post.title}
-                                </h3>
-                                <div className="grow text-xs">
-                                    <div>
-                                        <p className="text-ellipsis">
-                                            {post.content}
-                                        </p>
-                                    </div>
-                                    <div>키워드</div>
-                                    <div>모집인원 : {post.num}</div>
-                                    <div>
-                                        <p>
-                                            모집기간 :
-                                            <span> {post.startDate}</span>~
-                                            <span>{post.endDate}</span>
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <span>작성자 : </span>
-                                        <span>{post.email}</span>
-                                        <Image
-                                            width={45}
-                                            height={45}
-                                            src={
-                                                post.avator || '/image/logo.png'
-                                            }
-                                            quality={100}
-                                            alt="avatar"
-                                        />
-                                    </div>
-                                </div>
-                            </Link>
-                        </li>
-                    )
-                })}
+        <div>
+            <h1 className="text-orange-500 text-center my-7 text-4xl font-bold">
+                Welcome to Bridge
+            </h1>
+            <SearchBar handleFilter={setFilter} filters={filters} />
+            <FilterTab handleFilter={setFilter} filters={filters} />
+            {posts ? <Posts posts={posts} /> : <Loading />}
         </div>
     )
 }
