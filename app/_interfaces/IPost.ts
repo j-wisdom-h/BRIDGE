@@ -4,7 +4,7 @@ interface defaultPost {
 }
 
 interface IstudyPost extends defaultPost {
-    post_id?: number
+    study_id?: number
 }
 
 interface Ipost extends defaultPost {

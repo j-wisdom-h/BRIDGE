@@ -5,18 +5,10 @@ import { useSession } from 'next-auth/react'
 import { useEffect, useRef, useState } from 'react'
 
 import { IstudyPost } from '@/_interfaces/IPost'
-import { getMyPosts } from '@/_lib/post'
+import { getMystudy } from '@/_lib/study'
 
-async function getMystudy(userId) {
-    const res = await fetch(
-        `http://localhost:3000/api/mypage/mystudy?userId=${userId}`,
-    )
-    const result = await res.json()
-    console.log(result)
-    return result
-}
 export default function MyStudy() {
-    const [myposts, setMyposts] = useState<IstudyPost[]>([])
+    const [mystudies, setMyStudies] = useState<IstudyPost[]>([])
     const [selectedPost, setSelectedPost] = useState<number>()
     const selectedPostTitleRef = useRef('')
     const { data: session } = useSession()
@@ -25,16 +17,19 @@ export default function MyStudy() {
         async function fetchPosts() {
             try {
                 if (session) {
-                    const posts = await getMyPosts()
                     const studies = await getMystudy(session?.user.id)
-                    setMyposts([...posts, ...studies])
+                    setMyStudies(studies)
                 }
             } catch (error) {
                 console.error('Error fetching posts:', error)
             }
         }
         fetchPosts()
-    }, [])
+    }, [session])
+
+    useEffect(() => {
+        console.log(mystudies)
+    }, [mystudies])
 
     // 핸들러: 포스트 선택시 실행
     const handlePostChange = (event) => {
@@ -45,19 +40,16 @@ export default function MyStudy() {
 
     return (
         <div className="flex">
-            {myposts && (
+            {mystudies && (
                 <select
                     className="select select-bordered w-full max-w-xs"
                     value={selectedPost}
                     onChange={handlePostChange}
                 >
                     <option value="">===게시글 목록===</option>
-                    {myposts.map((post) => (
-                        <option
-                            key={post.id}
-                            value={post.post_id ? post.post_id : post.id}
-                        >
-                            {post.title}
+                    {mystudies.map((mystudy) => (
+                        <option key={mystudy.id} value={mystudy.id}>
+                            {mystudy.title}
                         </option>
                     ))}
                 </select>
@@ -65,7 +57,7 @@ export default function MyStudy() {
             <Link
                 href={{
                     pathname: `mystudy/${selectedPostTitleRef.current}`,
-                    query: { postId: selectedPost },
+                    query: { id: selectedPost },
                 }}
             >
                 스터디로 이동하기
