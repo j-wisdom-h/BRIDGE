@@ -1,6 +1,15 @@
-import React, { useState } from 'react'
+'use client'
+import { useSession } from 'next-auth/react'
+import React, { useEffect, useState } from 'react'
 
-function UserInfoForm({ userInfo, onUpdateUserInfo }) {
+function UserInfoForm() {
+    const [userInfo, setUserInfo] = useState({})
+    const { data: session } = useSession()
+
+    useEffect(() => {
+        session && setUserInfo(session.user)
+    }, [])
+
     const [editedUserInfo, setEditedUserInfo] = useState(userInfo)
     const [editMode, setEditMode] = useState({
         role: false,
@@ -14,7 +23,7 @@ function UserInfoForm({ userInfo, onUpdateUserInfo }) {
     }
 
     const handleSave = () => {
-        onUpdateUserInfo(editedUserInfo)
+        setUserInfo(editedUserInfo)
         setEditMode({
             role: false,
             nickname: false,
@@ -87,9 +96,14 @@ function UserInfoForm({ userInfo, onUpdateUserInfo }) {
     ]
 
     return (
-        <form>
-            {fields.map((field) => renderField(field.fieldName, field.label))}
-        </form>
+        <div className="card bg-base-100 shadow-xl p-5 mb-8">
+            <form>
+                <h3>내 정보 설정</h3>
+                {fields.map((field) =>
+                    renderField(field.fieldName, field.label),
+                )}
+            </form>
+        </div>
     )
 }
 
