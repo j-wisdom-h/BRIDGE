@@ -3,6 +3,7 @@ import Image from 'next/image'
 import CommentBoard from '@/_components/CommentBoard'
 import SubButton from '@/_components/SubButton'
 import { getTagColor } from '@/_lib/colortag'
+import { getTagColor } from '@/_lib/colortag'
 import { getPost } from '@/_lib/post'
 
 export const dynamic = 'force-dynamic'
@@ -65,6 +66,7 @@ export default async function Read({ params }: { params: { id: number } }) {
                     </div>
                     <SubButton postId={params.id} author={post.email} />
                 </div>
+                <CommentBoard author={post.email} postId={postId} />
                 <CommentBoard author={post.email} postId={postId} />
             </div>
         </>

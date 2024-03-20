@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useEffect, useRef, useState } from 'react'
 
 import { IstudyPost } from '@/_interfaces/IPost'
@@ -11,6 +12,7 @@ export default function MyStudy() {
     const [mystudies, setMyStudies] = useState<IstudyPost[]>([])
     const [selectedPost, setSelectedPost] = useState<number>()
     const selectedPostTitleRef = useRef('')
+    const { data: session } = useSession()
     const { data: session } = useSession()
 
     useEffect(() => {
