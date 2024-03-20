@@ -4,13 +4,8 @@ import { signOut } from 'next-auth/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { getInvites } from '@/_lib/invite'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-
-import { getInvites } from '@/_lib/invite'
 
 export default function SideBar({ session, status }) {
-    const [invites, setInvites] = useState([])
-    const [alarmcount, setAlarmCount] = useState(0)
     const [invites, setInvites] = useState([])
     const [alarmcount, setAlarmCount] = useState(0)
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -61,12 +56,6 @@ export default function SideBar({ session, status }) {
                     className="btn btn-ghost"
                     onClick={() => toggleDropdown()}
                 >
-                <div
-                    tabIndex={0}
-                    role="button"
-                    className="btn btn-ghost"
-                    onClick={() => toggleDropdown()}
-                >
                     {status === 'authenticated' ? (
                         <Avatar user={session.user} />
                     ) : (
@@ -75,7 +64,6 @@ export default function SideBar({ session, status }) {
                         </Link>
                     )}
                 </div>
-                {status === 'authenticated' && isDropdownOpen && (
                 {status === 'authenticated' && isDropdownOpen && (
                     <ul
                         tabIndex={0}
