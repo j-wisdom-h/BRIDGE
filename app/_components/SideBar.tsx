@@ -39,7 +39,6 @@ export default function SideBar({ session, status }) {
     useEffect(() => {
         async function fetchInvites() {
             const invitesData = await getInvitesAll()
-            console.log()
             setInvites(invitesData)
         }
         fetchInvites()
@@ -57,12 +56,6 @@ export default function SideBar({ session, status }) {
                     className="btn btn-ghost"
                     onClick={() => toggleDropdown()}
                 >
-                <div
-                    tabIndex={0}
-                    role="button"
-                    className="btn btn-ghost"
-                    onClick={() => toggleDropdown()}
-                >
                     {status === 'authenticated' ? (
                         <Avatar user={session.user} />
                     ) : (
@@ -71,7 +64,6 @@ export default function SideBar({ session, status }) {
                         </Link>
                     )}
                 </div>
-                {status === 'authenticated' && isDropdownOpen && (
                 {status === 'authenticated' && isDropdownOpen && (
                     <ul
                         tabIndex={0}
@@ -127,6 +119,31 @@ export default function SideBar({ session, status }) {
                             >
                                 Sign out
                             </button>
+                            <Link
+                                href="/alarm"
+                                onClick={() => {
+                                    closeDropdownWithDelay()
+                                }}
+                            >
+                                알람
+                                {alarmcount > 0 && (
+                                    <span className="absolute top-0 right-0 inline-block bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+                                        {alarmcount}
+                                    </span>
+                                )}
+                            </Link>
+                        </li>
+                        <li>
+                            <button
+                                onClick={() =>
+                                    signOut({
+                                        callbackUrl: '/',
+                                        redirect: true,
+                                    })
+                                }
+                            >
+                                Sign out
+                            </button>
                         </li>
                     </ul>
                 )}
@@ -147,6 +164,7 @@ export function Avatar({ user }) {
                     quality={100}
                     style={imageStyle}
                     alt="avatar"
+                    sizes="64px"
                 />
             </div>
         </div>

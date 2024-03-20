@@ -1,9 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { Ipost } from '@/_interfaces/IPost'
 import { colorTagStyles } from '@/_lib/colortag'
 
-export default function Posts({ posts }) {
+export default function Posts({ posts }: { posts: Ipost[] }) {
     return (
         <>
             {posts.length > 0 ? (

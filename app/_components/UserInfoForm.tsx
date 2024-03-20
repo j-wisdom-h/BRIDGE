@@ -1,95 +1,60 @@
-import React, { useState } from 'react'
+import { useSession } from 'next-auth/react'
+import React, { useEffect } from 'react'
+import { useRecoilState } from 'recoil'
 
-function UserInfoForm({ userInfo, onUpdateUserInfo }) {
-    const [editedUserInfo, setEditedUserInfo] = useState(userInfo)
-    const [editMode, setEditMode] = useState({
-        role: false,
-        nickname: false,
-        introduction: false,
-        allowChat: false,
-    })
+import { RoleState } from '@/_lib/atom'
+import { getMyRole, updateAllowChat } from '@/_lib/study'
 
-    const handleEdit = (field) => {
-        setEditMode({ ...editMode, [field]: true })
-    }
+function UserInfoForm({ memberId }: { memberId: number }) {
+    const { data: session } = useSession()
+    const [roleState, setRoleState] = useRecoilState(RoleState)
+    const { role, allowChat } = roleState
 
-    const handleSave = () => {
-        onUpdateUserInfo(editedUserInfo)
-        setEditMode({
-            role: false,
-            nickname: false,
-            introduction: false,
-            allowChat: false,
-        })
-    }
+    useEffect(() => {
+        memberId &&
+            session &&
+            (async () => {
+                try {
+                    const res = await getMyRole(memberId)
+                    const { role, allow_chat } = res
+                    setRoleState({ role: role, allowChat: allow_chat })
+                } catch (error) {
+                    console.error(error)
+                }
+            })()
+    }, [session, memberId, setRoleState])
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target
-        const newValue = type === 'checkbox' ? checked : value
-        setEditedUserInfo({ ...editedUserInfo, [name]: newValue })
-    }
-
-    const renderField = (fieldName, label) => {
-        return (
-            <div key={fieldName}>
-                <label>
-                    {label}:
-                    {editMode[fieldName] ? (
-                        <>
-                            <input
-                                type={
-                                    fieldName === 'allowChat'
-                                        ? 'checkbox'
-                                        : 'text'
-                                }
-                                name={fieldName}
-                                value={
-                                    fieldName === 'allowChat'
-                                        ? editedUserInfo[fieldName]
-                                        : editedUserInfo[fieldName]
-                                }
-                                checked={
-                                    fieldName === 'allowChat'
-                                        ? editedUserInfo[fieldName]
-                                        : null
-                                }
-                                onChange={handleChange}
-                            />
-                            <button type="button" onClick={handleSave}>
-                                Save
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            {fieldName === 'allowChat'
-                                ? editedUserInfo[fieldName]
-                                    ? 'Yes'
-                                    : 'No'
-                                : editedUserInfo[fieldName]}
-                            <button
-                                type="button"
-                                onClick={() => handleEdit(fieldName)}
-                            >
-                                Edit
-                            </button>
-                        </>
-                    )}
-                </label>
-            </div>
-        )
+    const handleEdit = (event) => {
+        const updatedAllowChat = event.target.checked as boolean
+        setRoleState({ ...roleState, allowChat: Number(!updatedAllowChat) })
+        updateAllowChat(Number(updatedAllowChat), memberId)
     }
 
     const fields = [
         { fieldName: 'role', label: 'Role' },
-        { fieldName: 'nickname', label: 'Nickname' },
-        { fieldName: 'introduction', label: 'Introduction' },
         { fieldName: 'allowChat', label: 'Allow Chat' },
     ]
 
     return (
-        <form>
-            {fields.map((field) => renderField(field.fieldName, field.label))}
-        </form>
+        <div className="card bg-base-100 shadow-xl p-5 mb-8">
+            <form>
+                <h3>내 정보 설정</h3>
+                <ul>
+                    <li>
+                        {fields[0].label} : {role}
+                    </li>
+                    <li>
+                        {fields[1].label} :
+                        <input
+                            type="checkbox"
+                            className="toggle [--tglbg:yellow] bg-blue-500 hover:bg-blue-700 border-blue-500"
+                            checked={Boolean(allowChat)}
+                            onChange={handleEdit}
+                        />
+                    </li>
+                </ul>
+            </form>
+        </div>
     )
 }
 

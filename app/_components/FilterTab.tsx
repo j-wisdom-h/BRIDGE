@@ -1,15 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
 
+import { IColoredTagItem } from '@/_interfaces/IColor'
 import { colorTagStyles } from '@/_lib/colortag'
 
 import SearchKeyword from './SearchKeyword'
-
-export interface IColoredTagItem {
-    index: number
-    tagItem: string
-    deleteTagItem: (e: React.MouseEvent<HTMLButtonElement>) => void
-}
 
 export function ColoredTagItem({
     index,

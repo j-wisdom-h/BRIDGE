@@ -4,7 +4,7 @@ import { LoginForm } from '@/_components/AuthForm'
 
 function Signin() {
     return (
-        <>
+        <div>
             <h2 className="text-2xl text-center orange mb-3.5 font-semibold">
                 Welcom to Bridge
             </h2>
@@ -17,7 +17,7 @@ function Signin() {
                     Sign up
                 </Link>
             </div>
-        </>
+        </div>
     )
 }
 

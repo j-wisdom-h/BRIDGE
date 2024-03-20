@@ -2,42 +2,32 @@
 
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useEffect, useRef, useState } from 'react'
 
-import { getMyPosts } from '@/_lib/post'
-interface Post {
-    id: number
-    title: string
-    post_id?: number
-}
-async function getMystudy(userId) {
-    const res = await fetch(
-        `http://localhost:3000/api/mypage/mystudy?userId=${userId}`,
-    )
-    const result = await res.json()
-    console.log(result)
-    return result
-}
+import { IstudyPost } from '@/_interfaces/IPost'
+import { getMystudy } from '@/_lib/study'
+
 export default function MyStudy() {
-    const [myposts, setMyposts] = useState<Post[]>([])
+    const [mystudies, setMyStudies] = useState<IstudyPost[]>([])
     const [selectedPost, setSelectedPost] = useState<number>()
     const selectedPostTitleRef = useRef('')
+    const { data: session } = useSession()
     const { data: session } = useSession()
 
     useEffect(() => {
         async function fetchPosts() {
             try {
                 if (session) {
-                    const posts = await getMyPosts()
                     const studies = await getMystudy(session?.user.id)
-                    setMyposts([...posts, ...studies])
+                    setMyStudies(studies)
                 }
             } catch (error) {
                 console.error('Error fetching posts:', error)
             }
         }
         fetchPosts()
-    }, [])
+    }, [session])
 
     // 핸들러: 포스트 선택시 실행
     const handlePostChange = (event) => {
@@ -47,32 +37,33 @@ export default function MyStudy() {
     }
 
     return (
-        <div className="flex">
-            {myposts && (
-                <select
-                    className="select select-bordered w-full max-w-xs"
-                    value={selectedPost}
-                    onChange={handlePostChange}
+        <div className="h-full">
+            <div className="flex justify-center items-center">
+                {mystudies && (
+                    <select
+                        className="select select-bordered w-full max-w-md"
+                        value={selectedPost}
+                        onChange={handlePostChange}
+                    >
+                        <option value="">===게시글 목록===</option>
+                        {mystudies.map((mystudy) => (
+                            <option key={mystudy.id} value={mystudy.id}>
+                                {mystudy.title}
+                            </option>
+                        ))}
+                    </select>
+                )}
+                <Link
+                    href={{
+                        pathname: `mystudy/${selectedPostTitleRef.current}`,
+                        query: { id: selectedPost },
+                    }}
                 >
-                    <option value="">===게시글 목록===</option>
-                    {myposts.map((post) => (
-                        <option
-                            key={post.id}
-                            value={post.post_id ? post.post_id : post.id}
-                        >
-                            {post.title}
-                        </option>
-                    ))}
-                </select>
-            )}
-            <Link
-                href={{
-                    pathname: `mystudy/${selectedPostTitleRef.current}`,
-                    query: { postId: selectedPost },
-                }}
-            >
-                스터디로 이동하기
-            </Link>
+                    <button className="btn bg-orange-500 text-white hover:bg-orange-600">
+                        스터디로 이동하기
+                    </button>
+                </Link>
+            </div>
         </div>
     )
 }

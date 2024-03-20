@@ -6,6 +6,8 @@ import Footer from '@/_components/Footer'
 import Header from '@/_components/Header'
 import Providers from '@/_components/Provider'
 
+import RecoilRootWrapper from './_components/RecoilRootWrapper'
+
 export const metadata: Metadata = {
     title: 'Bridge',
     description: 'our communication, bridge',
@@ -28,13 +30,13 @@ export default function RootLayout({
                 />
             </head> */}
             <body>
-                <div>
+                <RecoilRootWrapper>
                     <Providers>
                         <Header />
-                        <main className="min-h-screen">{children}</main>
+                        <main className="min-h-full">{children}</main>
                         <Footer />
                     </Providers>
-                </div>
+                </RecoilRootWrapper>
             </body>
         </html>
     )

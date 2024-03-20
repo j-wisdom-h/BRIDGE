@@ -1,3 +1,4 @@
+'use client'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import Calendar from '@fullcalendar/react'
 import { useRef } from 'react'
