@@ -27,10 +27,6 @@ export default function MyStudy() {
         fetchPosts()
     }, [session])
 
-    useEffect(() => {
-        console.log(mystudies)
-    }, [mystudies])
-
     // 핸들러: 포스트 선택시 실행
     const handlePostChange = (event) => {
         setSelectedPost(event.target.value)
@@ -39,29 +35,33 @@ export default function MyStudy() {
     }
 
     return (
-        <div className="flex">
-            {mystudies && (
-                <select
-                    className="select select-bordered w-full max-w-xs"
-                    value={selectedPost}
-                    onChange={handlePostChange}
+        <div className="h-full">
+            <div className="flex justify-center items-center">
+                {mystudies && (
+                    <select
+                        className="select select-bordered w-full max-w-md"
+                        value={selectedPost}
+                        onChange={handlePostChange}
+                    >
+                        <option value="">===게시글 목록===</option>
+                        {mystudies.map((mystudy) => (
+                            <option key={mystudy.id} value={mystudy.id}>
+                                {mystudy.title}
+                            </option>
+                        ))}
+                    </select>
+                )}
+                <Link
+                    href={{
+                        pathname: `mystudy/${selectedPostTitleRef.current}`,
+                        query: { id: selectedPost },
+                    }}
                 >
-                    <option value="">===게시글 목록===</option>
-                    {mystudies.map((mystudy) => (
-                        <option key={mystudy.id} value={mystudy.id}>
-                            {mystudy.title}
-                        </option>
-                    ))}
-                </select>
-            )}
-            <Link
-                href={{
-                    pathname: `mystudy/${selectedPostTitleRef.current}`,
-                    query: { id: selectedPost },
-                }}
-            >
-                스터디로 이동하기
-            </Link>
+                    <button className="btn bg-orange-500 text-white hover:bg-orange-600">
+                        스터디로 이동하기
+                    </button>
+                </Link>
+            </div>
         </div>
     )
 }

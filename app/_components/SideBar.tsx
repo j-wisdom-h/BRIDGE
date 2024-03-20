@@ -39,7 +39,6 @@ export default function SideBar({ session, status }) {
     useEffect(() => {
         async function fetchInvites() {
             const invitesData = await getInvitesAll()
-            console.log()
             setInvites(invitesData)
         }
         fetchInvites()
@@ -140,6 +139,7 @@ export function Avatar({ user }) {
                     quality={100}
                     style={imageStyle}
                     alt="avatar"
+                    sizes="64px"
                 />
             </div>
         </div>
